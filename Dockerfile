@@ -1,27 +1,15 @@
-# FAQ + Amiqus service — multi-stage build for ECS / ECR
 FROM node:20-alpine AS builder
-
 WORKDIR /app
-
-COPY package.json package-lock.json ./
+COPY package*.json ./
 RUN npm ci
-
 COPY . .
 RUN npm run build
 
-# Production image
-FROM node:20-alpine AS runner
-
+FROM node:20-alpine
 WORKDIR /app
-
-ENV NODE_ENV=production
-ENV PORT=8080
-
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
-
+COPY package*.json ./
+RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
-
-EXPOSE 8080
-
+COPY --from=builder /app/faq-chatbot-knowledge ./faq-chatbot-knowledge
+EXPOSE 3000
 CMD ["node", "dist/src/main.js"]

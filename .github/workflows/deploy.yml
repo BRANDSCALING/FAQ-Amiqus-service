@@ -1,9 +1,11 @@
-# Push to main → build image → ECR → ECS Express Mode (see README ECS section).
+# Deploy on feat branch for ECS testing; switch trigger to main after Haris sign-off.
 name: Build and Deploy to ECS Express Mode
 
 on:
   push:
-    branches: [main]
+    branches:
+      - feat/ecs-express-deployment
+  workflow_dispatch:
 
 env:
   AWS_REGION: ${{ vars.AWS_REGION }}
@@ -59,7 +61,7 @@ jobs:
           execution-role-arn: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/ecsTaskExecutionRole
           infrastructure-role-arn: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/ecsInfrastructure
           cluster: ${{ env.ECS_CLUSTER }}
-          container-port: 8080
+          container-port: 3000
           cpu: '1024'
           memory: '2048'
           health-check-path: /health

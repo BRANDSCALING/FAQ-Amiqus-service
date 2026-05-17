@@ -13,7 +13,7 @@ npm run start:dev
 
 - **Entry (prod):** `dist/src/main.js` (`npm run start:prod`)
 - **Source entry:** `src/main.ts`
-- **Port:** `process.env.PORT` (default **8080**; set `PORT=3000` in `.env` locally if you prefer)
+- **Port:** `process.env.PORT` (default **3000**)
 - **Health:** `GET /health`
 - Swagger: `/api` · FAQ test UI: `/faq-chat-test.html`
 
@@ -21,8 +21,8 @@ npm run start:dev
 
 ```bash
 docker build -t amiqus-faq-allianz .
-docker run --rm -p 8080:8080 --env-file .env amiqus-faq-allianz
-curl http://localhost:8080/health
+docker run --rm -p 3000:3000 --env-file .env amiqus-faq-allianz
+curl http://localhost:3000/health
 ```
 
 ## First push to ECR (manual)
@@ -38,7 +38,7 @@ Defaults: account `802749364652`, region `us-east-1`, repo `amiqus-faq-allianz`.
 
 ## GitHub Actions → ECS Express Mode
 
-On every push to **`main`**: build image → push ECR → deploy ECS.
+On push to **`feat/ecs-express-deployment`** (and manual dispatch): build image → push ECR → deploy ECS. Switch workflow to **`main`** after Haris sign-off.
 
 **Repository variables** (Settings → Secrets and variables → Actions → Variables):
 

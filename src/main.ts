@@ -18,7 +18,7 @@ async function bootstrap() {
     console.log('🚀 [FAQ-Amiqus] Starting application...');
     console.log('📋 OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '✅ Set' : '❌ Missing');
     console.log('📋 AMIQUS_API_KEY:', process.env.AMIQUS_API_KEY ? '✅ Set' : '❌ Missing');
-    console.log('📋 PORT:', process.env.PORT || '8080 (default)');
+    console.log('📋 PORT:', process.env.PORT || '3000 (default)');
 
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
       logger: ['error', 'warn', 'log'],
@@ -75,7 +75,7 @@ async function bootstrap() {
       res.status(200).json({ status: 'ok', service: 'faq-amiqus', timestamp: new Date().toISOString() });
     });
 
-    const port = Number(process.env.PORT) || 8080;
+    const port = Number(process.env.PORT) || 3000;
     await app.listen(port, '0.0.0.0');
     console.log(`✅ FAQ & Compliance API listening on http://0.0.0.0:${port}  Swagger: /api  FAQ test UI: /faq-chat-test.html`);
   } catch (error: unknown) {
