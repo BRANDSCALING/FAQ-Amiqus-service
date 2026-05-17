@@ -1,31 +1,58 @@
 # FAQ + Amiqus service
 
-NestJS app split from **`backend/`** (Decision Intelligence / Alchemist). Own `package.json`, build, and deploy (e.g. separate AWS App Runner service).
+NestJS app: UCWS FAQ chatbot (RAG) + Amiqus KYC / DocuSeal compliance.
 
-## What lives here
-
-| Path | Purpose |
-|------|---------|
-| `src/compliance/` | Amiqus + DocuSeal APIs and webhooks |
-| `faq-chatbot-knowledge/` | `questions.md`, `faq-meta.json`, Nest FAQ module (`module/`) |
-| `public/faq-chat-test.html` | Same-origin smoke UI for `/faq-chat` |
-
-## Commands
+## Local dev
 
 ```bash
 cd faq-amiqus-service
-cp .env.example .env   # then fill keys
+cp .env.example .env   # fill keys
 npm install
-npm run start:dev     # default PORT from .env or 3000
+npm run start:dev
 ```
 
-- Swagger: `http://localhost:3000/api`
-- FAQ test page: `http://localhost:3000/faq-chat-test.html`
-- Smoke script: `npm run test:faq-smoke` (or `API_BASE=... node scripts/test-faq-chat.js`)
+- **Entry (prod):** `dist/src/main.js` (`npm run start:prod`)
+- **Source entry:** `src/main.ts`
+- **Port:** `process.env.PORT` (default **8080**; set `PORT=3000` in `.env` locally if you prefer)
+- **Health:** `GET /health`
+- Swagger: `/api` · FAQ test UI: `/faq-chat-test.html`
 
-## Promote to its own Git repo
+## Docker (ECS)
 
-1. `git subtree split` or copy this folder to a new repository.
-2. Point CI / App Runner at **`faq-amiqus-service/`** as the project root (`npm ci && npm run build && npm run start:prod`).
+```bash
+docker build -t amiqus-faq-allianz .
+docker run --rm -p 8080:8080 --env-file .env amiqus-faq-allianz
+curl http://localhost:8080/health
+```
 
-The **`backend/`** tree in the parent repo is now **DI agent only** (chat, credits, Munawar integration).
+## First push to ECR (manual)
+
+After Haris provides AWS credentials:
+
+```bash
+chmod +x scripts/ecr-push.sh
+./scripts/ecr-push.sh
+```
+
+Defaults: account `802749364652`, region `us-east-1`, repo `amiqus-faq-allianz`.
+
+## GitHub Actions → ECS Express Mode
+
+On every push to **`main`**: build image → push ECR → deploy ECS.
+
+**Repository variables** (Settings → Secrets and variables → Actions → Variables):
+
+| Name | Example |
+|------|---------|
+| `AWS_REGION` | `us-east-1` |
+| `AWS_ACCOUNT_ID` | `802749364652` |
+| `ECR_REPOSITORY` | `amiqus-faq-allianz` |
+| `ECS_SERVICE` | `amiqus-faq-allianz-service` |
+| `ECS_CLUSTER` | *(from Haris)* |
+
+**IAM:** OIDC role `github-actions-ecs-role` (Haris sets up). Task env vars (secrets) are configured on the ECS service / task definition, not in this repo.
+
+**Required env vars on ECS task** (names only):  
+`PORT`, `NODE_ENV`, `OPENAI_API_KEY`, `AMIQUS_API_KEY`, `AMIQUS_WEBHOOK_SECRET`, `AMIQUS_ENABLE_CRIMINAL_RECORD_STEP`, `AMIQUS_DBS_STEP_TYPE`, `AMIQUS_CRIMINAL_RECORD_REGION`, `AMIQUS_CRIMINAL_RECORD_TYPE`, `DOCUSEAL_API_KEY`, `DOCUSEAL_URL`, `HSPSLA_TEMPLATE_ID`, `TENANTS_TEMPLATE_ID`, `PARTNER_BACKEND_URL`
+
+See `info.md` for the full deployment playbook.
