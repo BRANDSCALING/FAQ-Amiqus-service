@@ -1,10 +1,9 @@
-# Test on feat branch first; switch `on.push.branches` to [main] after Haris sign-off.
 name: Deploy to ECS
 
 on:
   push:
     branches:
-      - feat/ecs-express-deployment
+      - main
   workflow_dispatch:
 
 env:
