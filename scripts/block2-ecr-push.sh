@@ -43,8 +43,8 @@ echo "Logging in to ECR..."
 aws ecr get-login-password --region "$AWS_REGION" | \
   docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
-echo "Building image..."
-docker build -t "$IMAGE_LOCAL" .
+echo "Building image for linux/amd64 (Fargate)..."
+docker buildx build --platform linux/amd64 -t "$IMAGE_LOCAL" . --load
 
 echo "Tagging ${IMAGE_REMOTE}..."
 docker tag "${IMAGE_LOCAL}:latest" "$IMAGE_REMOTE"
