@@ -109,6 +109,54 @@ export class ComplianceService {
     };
   }
 
+  /**
+   * Read-only KYC status lookup used by the Unified portal to poll whether
+   * Amiqus has finished reviewing a record. Hits Amiqus GET /records/{id}
+   * and normalises the status into a stable shape the frontend can render.
+   *
+   * `approved` is true when Amiqus reports a terminal positive status
+   * (`approved`, `complete`, `completed`, `passed`). Anything else (including
+   * `in_progress`, `pending`, `failed`, `cancelled`) is reported as not yet
+   * approved so the UI keeps showing "Submitted" until the partner re-polls.
+   */
+  async getAmiqusRecordStatus(recordId: string): Promise<{
+    approved: boolean;
+    status: string | null;
+    recordId: number;
+  }> {
+    const idStr = String(recordId ?? '').trim();
+    if (!idStr || !/^\d+$/.test(idStr)) {
+      throw new BadRequestException('recordId must be a positive integer');
+    }
+    const id = parseInt(idStr, 10);
+    const token = this.requireAmiqusKey();
+
+    try {
+      const res = await axios.get(`${AMIQUS_BASE}/records/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        validateStatus: () => true,
+      });
+      if (res.status < 200 || res.status >= 300) {
+        this.logger.warn(
+          `Amiqus GET /records/${id} failed status=${res.status} body=${JSON.stringify(res.data)?.slice(0, 500)}`,
+        );
+        throw new BadGatewayException({
+          message: 'Amiqus record lookup failed',
+          status: res.status,
+          details: res.data,
+        });
+      }
+      const raw = (res.data as { status?: unknown })?.status;
+      const status = typeof raw === 'string' ? raw.toLowerCase() : null;
+      const approved =
+        !!status && ['approved', 'complete', 'completed', 'passed'].includes(status);
+      return { approved, status, recordId: id };
+    } catch (e) {
+      if (e instanceof BadGatewayException || e instanceof BadRequestException) throw e;
+      this.unwrapAxiosError(e, 'Amiqus');
+    }
+  }
+
   private requireDocusealConfig(): { apiKey: string; baseUrl: string } {
     const apiKey = this.config.get<string>('DOCUSEAL_API_KEY')?.trim();
     const baseUrl = this.config.get<string>('DOCUSEAL_URL')?.trim()?.replace(/\/$/, '');

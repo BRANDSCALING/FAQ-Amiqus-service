@@ -5,6 +5,7 @@ import {
   Get,
   Logger,
   Post,
+  Query,
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -35,6 +36,18 @@ export class ComplianceApiController {
   })
   async amiqusSteps() {
     return this.compliance.getAmiqusStepsDiagnostic();
+  }
+
+  @Get('amiqus-status')
+  @ApiOperation({
+    summary:
+      'Poll the current status of an Amiqus record. Returns { approved, status, recordId }. recordId query param required.',
+  })
+  async amiqusStatus(@Query('recordId') recordId?: string) {
+    if (!recordId) {
+      throw new BadRequestException('recordId query parameter is required');
+    }
+    return this.compliance.getAmiqusRecordStatus(recordId);
   }
 }
 
