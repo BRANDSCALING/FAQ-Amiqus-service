@@ -723,15 +723,33 @@ export class ComplianceService {
   }
 
   private extractDocuSealTemplateId(body: Record<string, unknown>): number | undefined {
-    const sub = body.submission as Record<string, unknown> | undefined;
-    if (sub && typeof sub.template_id === 'number') return sub.template_id;
+    // Flat shapes
     if (typeof body.template_id === 'number') return body.template_id;
+    const topTpl = body.template as Record<string, unknown> | undefined;
+    if (topTpl && typeof topTpl.id === 'number') return topTpl.id;
+
+    // Under body.submission (some DocuSeal shapes)
+    const sub = body.submission as Record<string, unknown> | undefined;
+    if (sub) {
+      if (typeof sub.template_id === 'number') return sub.template_id;
+      const subTpl = sub.template as Record<string, unknown> | undefined;
+      if (subTpl && typeof subTpl.id === 'number') return subTpl.id;
+    }
+
+    // Under body.data (form.completed / submission.completed wrap the payload here)
     const data = body.data as Record<string, unknown> | undefined;
     if (data) {
-      const inner = data.submission as Record<string, unknown> | undefined;
-      if (inner && typeof inner.template_id === 'number') return inner.template_id;
       if (typeof data.template_id === 'number') return data.template_id;
+      const dataTpl = data.template as Record<string, unknown> | undefined;
+      if (dataTpl && typeof dataTpl.id === 'number') return dataTpl.id;
+      const inner = data.submission as Record<string, unknown> | undefined;
+      if (inner) {
+        if (typeof inner.template_id === 'number') return inner.template_id;
+        const innerTpl = inner.template as Record<string, unknown> | undefined;
+        if (innerTpl && typeof innerTpl.id === 'number') return innerTpl.id;
+      }
     }
+
     return undefined;
   }
 
