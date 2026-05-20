@@ -90,21 +90,22 @@ export class ComplianceWebhooksController {
         throw new UnauthorizedException();
       }
 
-      const headerVal = req.headers['x-hub-signature'];
+      // Amiqus sends the HMAC-SHA256 of the raw body as a base64-encoded
+      // string in the `X-AQID-Signature` header (NOT GitHub-style
+      // `x-hub-signature: sha256=<hex>`). The signing secret is the one
+      // shown on Workflow → Webhooks in the Amiqus dashboard, which the
+      // operator pastes into AMIQUS_WEBHOOK_SECRET on the ECS task.
+      const headerVal = req.headers['x-aqid-signature'];
       const sigHeader = Array.isArray(headerVal) ? headerVal[0] : headerVal;
-      if (!sigHeader || !/^sha256=/i.test(sigHeader)) {
+      if (!sigHeader || typeof sigHeader !== 'string') {
         throw new UnauthorizedException();
       }
 
-      const providedHex = sigHeader.replace(/^sha256=/i, '').trim();
       const expected = createHmac('sha256', secret).update(rawBody).digest();
-      if (
-        providedHex.length !== expected.length * 2 ||
-        !/^[0-9a-f]+$/i.test(providedHex)
-      ) {
-        throw new UnauthorizedException();
-      }
-      const provided = Buffer.from(providedHex, 'hex');
+      // Buffer.from(..., 'base64') silently accepts invalid input and
+      // produces garbage, so we rely on the length + timingSafeEqual checks
+      // to reject malformed signatures.
+      const provided = Buffer.from(sigHeader.trim(), 'base64');
       if (provided.length !== expected.length || !timingSafeEqual(expected, provided)) {
         throw new UnauthorizedException();
       }
