@@ -110,19 +110,70 @@ export class ComplianceService {
   }
 
   /**
-   * Read-only KYC status lookup used by the Unified portal to poll whether
-   * Amiqus has finished reviewing a record. Hits Amiqus GET /records/{id}
-   * and normalises the status into a stable shape the frontend can render.
+   * Normalise a per-check status into the four states the frontend renders.
    *
-   * `approved` is true when Amiqus reports a terminal positive status
-   * (`approved`, `complete`, `completed`, `passed`). Anything else (including
-   * `in_progress`, `pending`, `failed`, `cancelled`) is reported as not yet
-   * approved so the UI keeps showing "Submitted" until the partner re-polls.
+   * Amiqus `check.status` values we've actually seen in prod:
+   *   accepted   — check passed (final positive)
+   *   rejected   — check failed (final negative)
+   *   paused     — user submitted, Amiqus reviewer or background process working
+   *   refer      — needs manual review
+   *   processing — still running
+   *   created    — not started yet
+   *   cancelled  — staff cancelled
+   *   expired    — deadline passed
+   *
+   * `completed_at` on the parent step tells us whether the *user* finished
+   * their part. For paused/refer/processing we use it to disambiguate
+   * "user not done yet" (pending) from "user done, waiting on Amiqus" (submitted).
    */
-  async getAmiqusRecordStatus(recordId: string): Promise<{
-    approved: boolean;
-    status: string | null;
+  private mapAmiqusCheckStatus(args: {
+    checkStatus: string | null;
+    response: unknown;
+    completedAt: string | null;
+  }): 'approved' | 'rejected' | 'submitted' | 'pending' {
+    const s = (args.checkStatus || '').toLowerCase().trim();
+    if (s === 'accepted' && args.response === true) return 'approved';
+    if (s === 'accepted') return 'approved';
+    if (s === 'rejected' || s === 'cancelled' || s === 'canceled' || s === 'expired') {
+      return 'rejected';
+    }
+    // paused / refer / processing / created → did the user finish?
+    if (args.completedAt) return 'submitted';
+    return 'pending';
+  }
+
+  /**
+   * Fetch a record from Amiqus and resolve each step into a per-check
+   * summary the rest of the system can consume:
+   *
+   *   {
+   *     recordId,
+   *     recordStatus,                    // raw e.g. "paused", "completed"
+   *     kyc: { status, response, completedAt, normalized },  // photo_id
+   *     dbs: { status, response, completedAt, normalized },  // criminal_record (null if no DBS step on the record)
+   *   }
+   *
+   * `normalized` is one of: 'approved' | 'rejected' | 'submitted' | 'pending'.
+   * Returns null on the per-check object if Amiqus didn't include that step
+   * (e.g. records created before DBS was enabled).
+   */
+  async getAmiqusRecordCheckSummary(recordId: string): Promise<{
     recordId: number;
+    recordStatus: string | null;
+    kyc: {
+      checkId: number | null;
+      status: string | null;
+      response: unknown;
+      completedAt: string | null;
+      normalized: 'approved' | 'rejected' | 'submitted' | 'pending';
+    } | null;
+    dbs: {
+      checkId: number | null;
+      status: string | null;
+      response: unknown;
+      completedAt: string | null;
+      normalized: 'approved' | 'rejected' | 'submitted' | 'pending';
+    } | null;
   }> {
     const idStr = String(recordId ?? '').trim();
     if (!idStr || !/^\d+$/.test(idStr)) {
@@ -130,27 +181,154 @@ export class ComplianceService {
     }
     const id = parseInt(idStr, 10);
     const token = this.requireAmiqusKey();
+    const headers = { Authorization: `Bearer ${token}` };
 
-    try {
-      const res = await axios.get(`${AMIQUS_BASE}/records/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+    const recRes = await axios.get(`${AMIQUS_BASE}/records/${id}`, {
+      headers,
+      validateStatus: () => true,
+    });
+    if (recRes.status < 200 || recRes.status >= 300) {
+      this.logger.warn(
+        `Amiqus GET /records/${id} failed status=${recRes.status} body=${JSON.stringify(recRes.data)?.slice(0, 500)}`,
+      );
+      throw new BadGatewayException({
+        message: 'Amiqus record lookup failed',
+        status: recRes.status,
+        details: recRes.data,
+      });
+    }
+
+    const recordData = recRes.data as {
+      status?: unknown;
+      steps?: Array<{
+        type?: string;
+        check?: number;
+        completed_at?: string | null;
+      }>;
+    };
+    const recordStatus =
+      typeof recordData.status === 'string' ? recordData.status.toLowerCase() : null;
+    const steps = Array.isArray(recordData.steps) ? recordData.steps : [];
+
+    const findStep = (type: string) => steps.find((s) => s?.type === type) || null;
+    const photoStep = findStep(AMIQUS_STEP_PHOTO_ID);
+    const criminalStep = findStep(AMIQUS_STEP_CRIMINAL_DEFAULT);
+
+    const fetchCheck = async (
+      stepType: string,
+      step: typeof steps[number] | null,
+    ) => {
+      if (!step || typeof step.check !== 'number') return null;
+      const cRes = await axios.get(`${AMIQUS_BASE}/checks/${step.check}`, {
+        headers,
         validateStatus: () => true,
       });
-      if (res.status < 200 || res.status >= 300) {
+      if (cRes.status < 200 || cRes.status >= 300) {
         this.logger.warn(
-          `Amiqus GET /records/${id} failed status=${res.status} body=${JSON.stringify(res.data)?.slice(0, 500)}`,
+          `Amiqus GET /checks/${step.check} (${stepType}) failed status=${cRes.status}`,
         );
-        throw new BadGatewayException({
-          message: 'Amiqus record lookup failed',
-          status: res.status,
-          details: res.data,
-        });
+        return {
+          checkId: step.check,
+          status: null as string | null,
+          response: null,
+          completedAt: step.completed_at ?? null,
+        };
       }
-      const raw = (res.data as { status?: unknown })?.status;
-      const status = typeof raw === 'string' ? raw.toLowerCase() : null;
-      const approved =
-        !!status && ['approved', 'complete', 'completed', 'passed'].includes(status);
-      return { approved, status, recordId: id };
+      const cd = cRes.data as { status?: unknown; response?: unknown };
+      return {
+        checkId: step.check,
+        status: typeof cd.status === 'string' ? cd.status.toLowerCase() : null,
+        response: cd.response,
+        completedAt: step.completed_at ?? null,
+      };
+    };
+
+    const [kycRaw, dbsRaw] = await Promise.all([
+      fetchCheck(AMIQUS_STEP_PHOTO_ID, photoStep),
+      fetchCheck(AMIQUS_STEP_CRIMINAL_DEFAULT, criminalStep),
+    ]);
+
+    const kyc = kycRaw
+      ? {
+          ...kycRaw,
+          normalized: this.mapAmiqusCheckStatus({
+            checkStatus: kycRaw.status,
+            response: kycRaw.response,
+            completedAt: kycRaw.completedAt,
+          }),
+        }
+      : null;
+    const dbs = dbsRaw
+      ? {
+          ...dbsRaw,
+          normalized: this.mapAmiqusCheckStatus({
+            checkStatus: dbsRaw.status,
+            response: dbsRaw.response,
+            completedAt: dbsRaw.completedAt,
+          }),
+        }
+      : null;
+
+    return { recordId: id, recordStatus, kyc, dbs };
+  }
+
+  /**
+   * Read-only KYC + DBS status lookup used by the Unified portal to poll
+   * whether Amiqus has finished reviewing a record. Splits the answer into
+   * per-check statuses (KYC = photo_id, DBS = criminal_record) so the
+   * frontend can render them as two badges on a single card.
+   *
+   * Legacy fields kept for backwards compatibility with older callers:
+   *   - `approved` — true when KYC is approved (DBS is reported separately)
+   *   - `status`   — the record-level status string (often "paused" even
+   *                  after the user has submitted both steps)
+   */
+  async getAmiqusRecordStatus(recordId: string): Promise<{
+    recordId: number;
+    status: string | null;
+    approved: boolean;
+    kycStatus: 'approved' | 'rejected' | 'submitted' | 'pending' | null;
+    dbsStatus: 'approved' | 'rejected' | 'submitted' | 'pending' | null;
+    kycCheck: {
+      checkId: number | null;
+      status: string | null;
+      response: unknown;
+      completedAt: string | null;
+    } | null;
+    dbsCheck: {
+      checkId: number | null;
+      status: string | null;
+      response: unknown;
+      completedAt: string | null;
+    } | null;
+  }> {
+    try {
+      const summary = await this.getAmiqusRecordCheckSummary(recordId);
+      const kycStatus = summary.kyc?.normalized ?? null;
+      const dbsStatus = summary.dbs?.normalized ?? null;
+      return {
+        recordId: summary.recordId,
+        status: summary.recordStatus,
+        approved: kycStatus === 'approved',
+        kycStatus,
+        dbsStatus,
+        kycCheck: summary.kyc
+          ? {
+              checkId: summary.kyc.checkId,
+              status: summary.kyc.status,
+              response: summary.kyc.response,
+              completedAt: summary.kyc.completedAt,
+            }
+          : null,
+        dbsCheck: summary.dbs
+          ? {
+              checkId: summary.dbs.checkId,
+              status: summary.dbs.status,
+              response: summary.dbs.response,
+              completedAt: summary.dbs.completedAt,
+            }
+          : null,
+      };
     } catch (e) {
       if (e instanceof BadGatewayException || e instanceof BadRequestException) throw e;
       this.unwrapAxiosError(e, 'Amiqus');
@@ -645,26 +823,71 @@ export class ComplianceService {
   }
 
   /**
-   * Amiqus webhook: when status is completed, log and placeholder DB update for partner KYC/DBS.
+   * Amiqus webhook handler. The webhook fires on any state change — record
+   * created, step completed, check accepted/rejected, etc. We don't try to
+   * be clever about which event triggered us: any signal is enough to
+   * re-fetch the full record from Amiqus and resolve per-check statuses.
+   *
+   * Forwards `kyc_status` and `dbs_status` to the partner backend as
+   * independent fields so the UI can render two badges (Identity check +
+   * DBS check) on the single Amiqus card. Sends `status: 'completed'` only
+   * as a legacy hint for the (now backwards-compatible) single-column path.
    */
-  async handleAmiqusWebhook(body: Record<string, unknown>): Promise<{ received: boolean; recordId?: number; status?: string }> {
+  async handleAmiqusWebhook(body: Record<string, unknown>): Promise<{
+    received: boolean;
+    recordId?: number;
+    status?: string;
+    kycStatus?: string | null;
+    dbsStatus?: string | null;
+  }> {
     const recordId = this.extractAmiqusRecordId(body);
     const status = this.extractAmiqusStatus(body);
 
-    this.logger.log(`Amiqus webhook recordId=${recordId ?? 'unknown'} status=${status ?? 'unknown'}`);
+    this.logger.log(
+      `Amiqus webhook recordId=${recordId ?? 'unknown'} status=${status ?? 'unknown'}`,
+    );
 
-    if (status?.toLowerCase() === 'completed' && recordId != null) {
+    if (recordId == null) {
+      this.logger.warn('Amiqus webhook missing recordId; nothing to sync');
+      return { received: true, recordId, status };
+    }
+
+    let kycStatus: 'approved' | 'rejected' | 'submitted' | 'pending' | null = null;
+    let dbsStatus: 'approved' | 'rejected' | 'submitted' | 'pending' | null = null;
+    try {
+      const summary = await this.getAmiqusRecordCheckSummary(String(recordId));
+      kycStatus = summary.kyc?.normalized ?? null;
+      dbsStatus = summary.dbs?.normalized ?? null;
+    } catch (e) {
+      this.logger.warn(
+        `Amiqus webhook recordId=${recordId} check summary fetch failed: ${(e as Error)?.message}`,
+      );
+    }
+
+    if (kycStatus || dbsStatus) {
+      await this.postToPartner(
+        '/api/internal/compliance/update-status',
+        {
+          amiqus_record_id: String(recordId),
+          kyc_status: kycStatus,
+          dbs_status: dbsStatus,
+        },
+        'amiqus-webhook-update-status',
+      );
+    } else if (status?.toLowerCase() === 'completed') {
+      // Fallback: we couldn't pull per-check data but the record itself
+      // says completed — keep the legacy behaviour as a safety net.
       await this.postToPartner(
         '/api/internal/compliance/update-status',
         {
           amiqus_record_id: String(recordId),
           status: 'completed',
         },
-        'amiqus-webhook-update-status',
+        'amiqus-webhook-update-status-legacy',
       );
     }
 
-    return { received: true, recordId, status };
+    return { received: true, recordId, status, kycStatus, dbsStatus };
   }
 
   /**
