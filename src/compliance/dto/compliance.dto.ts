@@ -30,7 +30,10 @@ export class InitAmiqusDto {
   email: string;
 }
 
-export type ContractType = 'HSPSLA' | 'TENANTS';
+// 'SLA' is the live combined HSP + Tenant SLA (DocuSeal template 4).
+// 'HSPSLA' and 'TENANTS' are the legacy standalone agreements kept for
+// backwards-compatibility — the new Compliance UI only ever sends 'SLA'.
+export type ContractType = 'SLA' | 'HSPSLA' | 'TENANTS';
 
 export class InitDocuSealDto {
   @ApiProperty({ example: 'hsp@example.com' })
@@ -62,9 +65,9 @@ export class InitDocuSealDto {
   @MaxLength(500)
   registeredAddress: string;
 
-  @ApiProperty({ enum: ['HSPSLA', 'TENANTS'] })
+  @ApiProperty({ enum: ['SLA', 'HSPSLA', 'TENANTS'] })
   @IsString()
-  @IsIn(['HSPSLA', 'TENANTS'])
+  @IsIn(['SLA', 'HSPSLA', 'TENANTS'])
   contractType: ContractType;
 }
 

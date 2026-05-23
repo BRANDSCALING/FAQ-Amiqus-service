@@ -49,6 +49,18 @@ export class ComplianceApiController {
     }
     return this.compliance.getAmiqusRecordStatus(recordId);
   }
+
+  @Get('resume-url')
+  @ApiOperation({
+    summary:
+      'Resume URL for an in-progress Amiqus record. Returns { recordId, url, recordStatus }. recordId query param required. `url` is null if the record is terminal (completed/cancelled/expired).',
+  })
+  async amiqusResumeUrl(@Query('recordId') recordId?: string) {
+    if (!recordId) {
+      throw new BadRequestException('recordId query parameter is required');
+    }
+    return this.compliance.getAmiqusResumeUrl(recordId);
+  }
 }
 
 @ApiTags('compliance-contracts')
@@ -60,6 +72,18 @@ export class ContractsApiController {
   @ApiOperation({ summary: 'Create DocuSeal submission (HSP + PMA); returns HSP slug for embed' })
   async initDocuSeal(@Body() dto: InitDocuSealDto) {
     return this.compliance.initDocuSeal(dto);
+  }
+
+  @Get('resume-url')
+  @ApiOperation({
+    summary:
+      'Resume URL + live state for an existing DocuSeal submission. Returns { submissionId, url, signed, opened, submitterStatus }.',
+  })
+  async docuSealResumeUrl(@Query('submissionId') submissionId?: string) {
+    if (!submissionId) {
+      throw new BadRequestException('submissionId query parameter is required');
+    }
+    return this.compliance.getDocuSealResumeUrl(submissionId);
   }
 }
 

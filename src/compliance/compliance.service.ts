@@ -130,16 +130,23 @@ export class ComplianceService {
     checkStatus: string | null;
     response: unknown;
     completedAt: string | null;
-  }): 'approved' | 'rejected' | 'submitted' | 'pending' {
+  }): 'approved' | 'rejected' | 'submitted' | 'in_progress' | 'pending' {
     const s = (args.checkStatus || '').toLowerCase().trim();
     if (s === 'accepted' && args.response === true) return 'approved';
     if (s === 'accepted') return 'approved';
     if (s === 'rejected' || s === 'cancelled' || s === 'canceled' || s === 'expired') {
       return 'rejected';
     }
-    // paused / refer / processing / created → did the user finish?
+    // `paused` / `refer` = user finished their part, Amiqus is reviewing.
+    if (s === 'paused' || s === 'refer') return 'submitted';
+    // step.completed_at being set is the strongest "user submitted" signal.
     if (args.completedAt) return 'submitted';
-    return 'pending';
+    // Early-state checks where the user opened the record but hasn't
+    // actually submitted any input yet. We want this distinct from
+    // 'pending' (= "user never started") so the UI can offer Continue
+    // instead of Start.
+    if (s === 'pending' || s === 'created' || s === 'processing') return 'in_progress';
+    return 'in_progress';
   }
 
   /**
@@ -153,7 +160,7 @@ export class ComplianceService {
    *     dbs: { status, response, completedAt, normalized },  // criminal_record (null if no DBS step on the record)
    *   }
    *
-   * `normalized` is one of: 'approved' | 'rejected' | 'submitted' | 'pending'.
+   * `normalized` is one of: 'approved' | 'rejected' | 'submitted' | 'in_progress' | 'pending'.
    * Returns null on the per-check object if Amiqus didn't include that step
    * (e.g. records created before DBS was enabled).
    */
@@ -165,14 +172,14 @@ export class ComplianceService {
       status: string | null;
       response: unknown;
       completedAt: string | null;
-      normalized: 'approved' | 'rejected' | 'submitted' | 'pending';
+      normalized: 'approved' | 'rejected' | 'submitted' | 'in_progress' | 'pending';
     } | null;
     dbs: {
       checkId: number | null;
       status: string | null;
       response: unknown;
       completedAt: string | null;
-      normalized: 'approved' | 'rejected' | 'submitted' | 'pending';
+      normalized: 'approved' | 'rejected' | 'submitted' | 'in_progress' | 'pending';
     } | null;
   }> {
     const idStr = String(recordId ?? '').trim();
@@ -287,8 +294,8 @@ export class ComplianceService {
     recordId: number;
     status: string | null;
     approved: boolean;
-    kycStatus: 'approved' | 'rejected' | 'submitted' | 'pending' | null;
-    dbsStatus: 'approved' | 'rejected' | 'submitted' | 'pending' | null;
+    kycStatus: 'approved' | 'rejected' | 'submitted' | 'in_progress' | 'pending' | null;
+    dbsStatus: 'approved' | 'rejected' | 'submitted' | 'in_progress' | 'pending' | null;
     kycCheck: {
       checkId: number | null;
       status: string | null;
@@ -382,9 +389,16 @@ export class ComplianceService {
     }
   }
 
-  private templateIdForContract(contractType: 'HSPSLA' | 'TENANTS'): number {
+  private templateIdForContract(contractType: 'HSPSLA' | 'TENANTS' | 'SLA'): number {
+    // Maps the abstract contractType to the DocuSeal template id via env.
+    //   SLA     → SLA_TEMPLATE_ID         (template 4: Allianz_Housing_Complete_Contracts_1
+    //                                       — combined HSP + Tenant agreement, the live one)
+    //   HSPSLA  → HSPSLA_TEMPLATE_ID      (template 1, legacy standalone HSP SLA)
+    //   TENANTS → TENANTS_TEMPLATE_ID     (template 2, legacy standalone Tenants SLA)
     const envKey =
-      contractType === 'HSPSLA' ? 'HSPSLA_TEMPLATE_ID' : 'TENANTS_TEMPLATE_ID';
+      contractType === 'SLA' ? 'SLA_TEMPLATE_ID'
+        : contractType === 'HSPSLA' ? 'HSPSLA_TEMPLATE_ID'
+          : 'TENANTS_TEMPLATE_ID';
     const raw = this.config.get<string>(envKey)?.trim();
     const n = parseInt(raw || '', 10);
     if (!Number.isFinite(n) || n <= 0) {
@@ -469,6 +483,24 @@ export class ComplianceService {
       this.config.get<string>('AMIQUS_CRIMINAL_RECORD_REGION')?.trim() || 'england';
     const criminalCheckType =
       this.config.get<string>('AMIQUS_CRIMINAL_RECORD_TYPE')?.trim() || 'standard';
+    // Whether the DBS (criminal_record) cost is collected from the end
+    // user via Amiqus's built-in payment flow. Default true so a fresh
+    // deploy stops billing Brandscaling for every user's £18 DBS check.
+    // Set AMIQUS_CRIMINAL_RECORD_ENABLE_PAYMENT=false on the ECS task to
+    // revert to "Brandscaling pays" (e.g. for staging / smoke-tests where
+    // you don't want a real card prompt). Photo ID (£1) intentionally
+    // stays on Brandscaling — we don't want two payment screens in the
+    // compliance flow for a £1 step.
+    const criminalEnablePaymentRaw = this.config
+      .get<string>('AMIQUS_CRIMINAL_RECORD_ENABLE_PAYMENT')
+      ?.trim()
+      .toLowerCase();
+    const criminalEnablePayment =
+      criminalEnablePaymentRaw === undefined || criminalEnablePaymentRaw === ''
+        ? true
+        : criminalEnablePaymentRaw === 'true' ||
+          criminalEnablePaymentRaw === '1' ||
+          criminalEnablePaymentRaw === 'yes';
     const recordClientMessage = this.config.get<string>('AMIQUS_RECORD_CLIENT_MESSAGE')?.trim();
     const reminderRaw = this.config.get<string>('AMIQUS_RECORD_REMINDER')?.trim().toLowerCase();
     const recordReminder =
@@ -556,6 +588,10 @@ export class ComplianceService {
                 preferences: {
                   region: criminalRegion,
                   type: criminalCheckType,
+                  // `enable_payment: true` → Amiqus collects the £18 DBS
+                  // fee from the user via card during the verification
+                  // flow instead of billing the Brandscaling workspace.
+                  enable_payment: criminalEnablePayment,
                 },
               }
             : { type: criminalStepType };
@@ -624,45 +660,57 @@ export class ComplianceService {
     const today = this.formatTodayDdMmYyyy();
 
     // IMPORTANT: DocuSeal field names must match template labels exactly.
-    // HSPSLA (template 1) and TENANTS (template 2) use different field names.
+    // HSPSLA (template 1) and TENANTS (template 2) use different field
+    // names. The new SLA combined template (template 4,
+    // Allianz_Housing_Complete_Contracts_1) has not had its field labels
+    // mapped here yet — we send no prefills and rely on the existing
+    // "unknown field" fallback path below to create the submission
+    // empty-handed. The user fills everything inside the DocuSeal UI.
+    // Once the SLA template's field labels are confirmed, swap [] for an
+    // explicit array of { name, default_value } objects.
     const hspFields =
-      dto.contractType === 'TENANTS'
-        ? [
-            { name: 'HSP Financial Contact Name', default_value: dto.hspName },
-            { name: 'HSP Financial Contact Address', default_value: dto.registeredAddress },
-            { name: 'HSP Financial Contact Email', default_value: dto.hspEmail },
-            { name: 'HSP Signatory Name', default_value: dto.hspName },
-            {
-              name: 'HSP Signatory Date',
-              default_value: today,
-              preferences: { format: 'DD/MM/YYYY' },
-            },
-          ]
-        : [
-            { name: 'Date', default_value: today, preferences: { format: 'DD/MM/YYYY' } },
-            { name: 'Company Name', default_value: dto.companyName },
-            { name: 'Registered Office Address', default_value: dto.registeredAddress },
-            { name: 'Company Reg Number', default_value: dto.companyRegNumber },
-            { name: 'HSP Property Address', default_value: dto.registeredAddress },
-            { name: 'HSP Director Name', default_value: dto.hspName },
-            { name: 'Date', default_value: today, preferences: { format: 'DD/MM/YYYY' } },
-          ];
+      dto.contractType === 'SLA'
+        ? ([] as Array<{ name: string; default_value?: string; preferences?: unknown }>)
+        : dto.contractType === 'TENANTS'
+          ? [
+              { name: 'HSP Financial Contact Name', default_value: dto.hspName },
+              { name: 'HSP Financial Contact Address', default_value: dto.registeredAddress },
+              { name: 'HSP Financial Contact Email', default_value: dto.hspEmail },
+              { name: 'HSP Signatory Name', default_value: dto.hspName },
+              {
+                name: 'HSP Signatory Date',
+                default_value: today,
+                preferences: { format: 'DD/MM/YYYY' },
+              },
+            ]
+          : [
+              { name: 'Date', default_value: today, preferences: { format: 'DD/MM/YYYY' } },
+              { name: 'Company Name', default_value: dto.companyName },
+              { name: 'Registered Office Address', default_value: dto.registeredAddress },
+              { name: 'Company Reg Number', default_value: dto.companyRegNumber },
+              { name: 'HSP Property Address', default_value: dto.registeredAddress },
+              { name: 'HSP Director Name', default_value: dto.hspName },
+              { name: 'Date', default_value: today, preferences: { format: 'DD/MM/YYYY' } },
+            ];
 
     // PMA submitter prefills: names must match DocuSeal template field labels exactly.
     // Template 1 (HSPSLA) uses Director/Job Title; template 2 (TENANTS) uses Signatory*.
+    // Template 4 (SLA combined) — same caveat as hspFields above; no prefills until confirmed.
     const pmaFields =
-      dto.contractType === 'HSPSLA'
-        ? [
-            { name: 'PMA Director Name', default_value: PMA_NAME },
-            { name: 'PMA Job Title', default_value: 'Partnering Managing Agent' },
-            { name: 'PMA Signatory Date', default_value: today, preferences: { format: 'DD/MM/YYYY' } },
-          ]
-        : [
-            { name: 'PMA Signatory Name', default_value: PMA_NAME },
-            { name: 'PMA Signatory Title', default_value: 'Partnering Managing Agent' },
-            { name: 'PMA Signatory Date', default_value: today, preferences: { format: 'DD/MM/YYYY' } },
-            // Signature fields are completed in the signing UI; do not send default_value here.
-          ];
+      dto.contractType === 'SLA'
+        ? ([] as Array<{ name: string; default_value?: string; preferences?: unknown }>)
+        : dto.contractType === 'HSPSLA'
+          ? [
+              { name: 'PMA Director Name', default_value: PMA_NAME },
+              { name: 'PMA Job Title', default_value: 'Partnering Managing Agent' },
+              { name: 'PMA Signatory Date', default_value: today, preferences: { format: 'DD/MM/YYYY' } },
+            ]
+          : [
+              { name: 'PMA Signatory Name', default_value: PMA_NAME },
+              { name: 'PMA Signatory Title', default_value: 'Partnering Managing Agent' },
+              { name: 'PMA Signatory Date', default_value: today, preferences: { format: 'DD/MM/YYYY' } },
+              // Signature fields are completed in the signing UI; do not send default_value here.
+            ];
 
     const payload = {
       template_id: templateId,
@@ -737,17 +785,15 @@ export class ComplianceService {
               `DocuSeal fallback submission created templateId=${templateId} slug=${fallbackSlug} submissionId=${fallbackSubmissionId}`,
             );
             if (fallbackSubmissionId != null) {
+              const partnerPayload =
+                dto.contractType === 'SLA'
+                  ? { email: dto.hspEmail, sla_submission_id: String(fallbackSubmissionId) }
+                  : dto.contractType === 'HSPSLA'
+                    ? { email: dto.hspEmail, hspsla_submission_id: String(fallbackSubmissionId) }
+                    : { email: dto.hspEmail, tenants_sla_submission_id: String(fallbackSubmissionId) };
               await this.postToPartner(
                 '/api/internal/compliance/link-record',
-                dto.contractType === 'HSPSLA'
-                  ? {
-                      email: dto.hspEmail,
-                      hspsla_submission_id: String(fallbackSubmissionId),
-                    }
-                  : {
-                      email: dto.hspEmail,
-                      tenants_sla_submission_id: String(fallbackSubmissionId),
-                    },
+                partnerPayload,
                 'docuseal-link-record-fallback',
               );
             } else {
@@ -798,17 +844,15 @@ export class ComplianceService {
 
       const submissionId = hsp?.submission_id ?? submitters[0]?.submission_id;
       if (submissionId != null) {
+        const partnerPayload =
+          dto.contractType === 'SLA'
+            ? { email: dto.hspEmail, sla_submission_id: String(submissionId) }
+            : dto.contractType === 'HSPSLA'
+              ? { email: dto.hspEmail, hspsla_submission_id: String(submissionId) }
+              : { email: dto.hspEmail, tenants_sla_submission_id: String(submissionId) };
         await this.postToPartner(
           '/api/internal/compliance/link-record',
-          dto.contractType === 'HSPSLA'
-            ? {
-                email: dto.hspEmail,
-                hspsla_submission_id: String(submissionId),
-              }
-            : {
-                email: dto.hspEmail,
-                tenants_sla_submission_id: String(submissionId),
-              },
+          partnerPayload,
           'docuseal-link-record',
         );
       } else {
@@ -820,6 +864,115 @@ export class ComplianceService {
       if (e instanceof BadGatewayException) throw e;
       this.unwrapAxiosError(e, 'DocuSeal');
     }
+  }
+
+  /**
+   * Resume URL for an Amiqus record — the same `perform_url` Amiqus minted
+   * at record creation. Calling `/records/{id}` returns it back: if the
+   * record is still active, Amiqus echoes the original URL; once the user
+   * has completed every step or the record has expired/been cancelled,
+   * Amiqus sets it to `false`.
+   *
+   * We surface `null` in those terminal cases so the caller can decide
+   * what to do (typically: don't show a "Continue" button).
+   */
+  async getAmiqusResumeUrl(recordId: string): Promise<{
+    recordId: number;
+    url: string | null;
+    recordStatus: string | null;
+  }> {
+    const idStr = String(recordId ?? '').trim();
+    if (!idStr || !/^\d+$/.test(idStr)) {
+      throw new BadRequestException('recordId must be a positive integer');
+    }
+    const id = parseInt(idStr, 10);
+    const token = this.requireAmiqusKey();
+
+    const res = await axios.get(`${AMIQUS_BASE}/records/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      validateStatus: () => true,
+    });
+    if (res.status < 200 || res.status >= 300) {
+      this.logger.warn(
+        `Amiqus GET /records/${id} (resume) failed status=${res.status}`,
+      );
+      throw new BadGatewayException({
+        message: 'Amiqus record lookup failed',
+        status: res.status,
+        details: res.data,
+      });
+    }
+    const data = res.data as { perform_url?: unknown; status?: unknown };
+    const url =
+      typeof data.perform_url === 'string' && data.perform_url.length > 0
+        ? data.perform_url
+        : null;
+    const recordStatus = typeof data.status === 'string' ? data.status : null;
+    return { recordId: id, url, recordStatus };
+  }
+
+  /**
+   * Resume URL for a DocuSeal submission — the HSP submitter's signing
+   * page. Looks up `/api/submissions/{id}`, finds the submitter with
+   * `role: 'HSP'`, and rebuilds `${baseUrl}/s/${slug}`.
+   *
+   * Also returns the live `signed` state of the submitter so the UI can
+   * self-correct if the DB hasn't caught up (DocuSeal webhook lag, missed
+   * delivery, etc.). `opened` tells the caller whether the user viewed
+   * the form at least once — useful for showing "Continue" vs "Start".
+   */
+  async getDocuSealResumeUrl(submissionId: string): Promise<{
+    submissionId: number;
+    url: string | null;
+    signed: boolean;
+    opened: boolean;
+    submitterStatus: string | null;
+  }> {
+    const idStr = String(submissionId ?? '').trim();
+    if (!idStr || !/^\d+$/.test(idStr)) {
+      throw new BadRequestException('submissionId must be a positive integer');
+    }
+    const id = parseInt(idStr, 10);
+    const { apiKey, baseUrl } = this.requireDocusealConfig();
+
+    const res = await axios.get(`${baseUrl}/api/submissions/${id}`, {
+      headers: { 'X-Auth-Token': apiKey, Accept: 'application/json' },
+      validateStatus: () => true,
+    });
+    if (res.status < 200 || res.status >= 300) {
+      this.logger.warn(
+        `DocuSeal GET /submissions/${id} (resume) failed status=${res.status}`,
+      );
+      throw new BadGatewayException({
+        message: 'DocuSeal submission lookup failed',
+        status: res.status,
+        details: res.data,
+      });
+    }
+
+    const data = res.data as {
+      submitters?: Array<{
+        role?: string;
+        slug?: string;
+        status?: string;
+        completed_at?: string | null;
+        opened_at?: string | null;
+      }>;
+    };
+    const submitters = Array.isArray(data.submitters) ? data.submitters : [];
+    const hsp =
+      submitters.find((s) => String(s?.role || '').toUpperCase() === 'HSP') ||
+      submitters[0] ||
+      null;
+
+    const slug = hsp?.slug && typeof hsp.slug === 'string' ? hsp.slug : null;
+    const url = slug ? `${baseUrl}/s/${slug}` : null;
+    const signed = !!hsp?.completed_at;
+    const opened = !!hsp?.opened_at || signed;
+    const submitterStatus =
+      typeof hsp?.status === 'string' ? hsp.status.toLowerCase() : null;
+
+    return { submissionId: id, url, signed, opened, submitterStatus };
   }
 
   /**
@@ -852,8 +1005,8 @@ export class ComplianceService {
       return { received: true, recordId, status };
     }
 
-    let kycStatus: 'approved' | 'rejected' | 'submitted' | 'pending' | null = null;
-    let dbsStatus: 'approved' | 'rejected' | 'submitted' | 'pending' | null = null;
+    let kycStatus: 'approved' | 'rejected' | 'submitted' | 'in_progress' | 'pending' | null = null;
+    let dbsStatus: 'approved' | 'rejected' | 'submitted' | 'in_progress' | 'pending' | null = null;
     try {
       const summary = await this.getAmiqusRecordCheckSummary(String(recordId));
       kycStatus = summary.kyc?.normalized ?? null;
@@ -946,7 +1099,9 @@ export class ComplianceService {
     return false;
   }
 
-  private parseEnvTemplateId(key: 'HSPSLA_TEMPLATE_ID' | 'TENANTS_TEMPLATE_ID'): number | undefined {
+  private parseEnvTemplateId(
+    key: 'HSPSLA_TEMPLATE_ID' | 'TENANTS_TEMPLATE_ID' | 'SLA_TEMPLATE_ID',
+  ): number | undefined {
     const raw = this.config.get<string>(key)?.trim();
     const n = parseInt(raw || '', 10);
     return Number.isFinite(n) && n > 0 ? n : undefined;
