@@ -712,25 +712,46 @@ export class ComplianceService {
               // Signature fields are completed in the signing UI; do not send default_value here.
             ];
 
+    // Submitter shape differs by template:
+    //
+    //   SLA (template 4, Allianz_Housing_Complete_Contracts_1) defines a
+    //   SINGLE submitter role called "First Party" — the HSP signs alone,
+    //   no counter-signature from a PMA. Sending two submitters here makes
+    //   DocuSeal accept the call but drop one role, leaving the response
+    //   without anything matching role='HSP' downstream.
+    //
+    //   HSPSLA (template 1) and TENANTS (template 2) are legacy two-party
+    //   templates with explicit HSP + PMA roles.
     const payload = {
       template_id: templateId,
       send_email: false,
-      submitters: [
-        {
-          role: 'HSP',
-          email: dto.hspEmail,
-          name: dto.hspName,
-          send_email: false,
-          fields: hspFields,
-        },
-        {
-          role: 'PMA',
-          email: PMA_EMAIL,
-          name: PMA_NAME,
-          send_email: false,
-          fields: pmaFields,
-        },
-      ],
+      submitters:
+        dto.contractType === 'SLA'
+          ? [
+              {
+                role: 'First Party',
+                email: dto.hspEmail,
+                name: dto.hspName,
+                send_email: false,
+                fields: hspFields,
+              },
+            ]
+          : [
+              {
+                role: 'HSP',
+                email: dto.hspEmail,
+                name: dto.hspName,
+                send_email: false,
+                fields: hspFields,
+              },
+              {
+                role: 'PMA',
+                email: PMA_EMAIL,
+                name: PMA_NAME,
+                send_email: false,
+                fields: pmaFields,
+              },
+            ],
     };
 
     const url = `${baseUrl}/api/submissions`;
@@ -774,10 +795,14 @@ export class ComplianceService {
             if (!Array.isArray(fallbackSubmitters)) {
               throw new BadGatewayException('DocuSeal returned an unexpected response');
             }
-            const fallbackHsp = fallbackSubmitters.find((s) => s.role === 'HSP');
+            // Role-matching strategy depends on contractType (see main path).
+            const fallbackHsp =
+              dto.contractType === 'SLA'
+                ? fallbackSubmitters.find((s) => s.role === 'First Party') || fallbackSubmitters[0]
+                : fallbackSubmitters.find((s) => s.role === 'HSP');
             const fallbackSlug = fallbackHsp?.slug;
             if (!fallbackSlug) {
-              throw new BadGatewayException('DocuSeal response missing HSP submitter slug');
+              throw new BadGatewayException('DocuSeal response missing signer submitter slug');
             }
             const fallbackSubmissionId =
               fallbackHsp?.submission_id ?? fallbackSubmitters[0]?.submission_id;
@@ -835,11 +860,17 @@ export class ComplianceService {
         throw new BadGatewayException('DocuSeal returned an unexpected response');
       }
 
-      const hsp = submitters.find((s) => s.role === 'HSP');
+      // For the SLA template (single role: "First Party") we either find
+      // that exact role or fall back to the first (only) submitter.
+      // Legacy HSPSLA / TENANTS templates use explicit role 'HSP'.
+      const hsp =
+        dto.contractType === 'SLA'
+          ? submitters.find((s) => s.role === 'First Party') || submitters[0]
+          : submitters.find((s) => s.role === 'HSP');
       const slug = hsp?.slug;
       if (!slug) {
-        this.logger.error(`DocuSeal no HSP submitter slug in: ${JSON.stringify(submitters)}`);
-        throw new BadGatewayException('DocuSeal response missing HSP submitter slug');
+        this.logger.error(`DocuSeal no signer submitter slug in: ${JSON.stringify(submitters)}`);
+        throw new BadGatewayException('DocuSeal response missing signer submitter slug');
       }
 
       const submissionId = hsp?.submission_id ?? submitters[0]?.submission_id;
