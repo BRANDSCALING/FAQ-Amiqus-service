@@ -1007,6 +1007,92 @@ export class ComplianceService {
   }
 
   /**
+   * Admin-only: get a short-lived, token-authenticated URL the admin can
+   * use to view the signed PDF for an SLA submission — without logging into
+   * DocuSeal.
+   *
+   * DocuSeal's `GET /api/submissions/{id}` response includes pre-signed
+   * URLs (S3-style auth in the URL itself, typically valid ~1 hour). We
+   * pick the most useful one:
+   *   1. `combined_document_url` — the final signed PDF with signatures
+   *      applied. This is what the admin actually wants to see.
+   *   2. First entry in `documents[*].url` — the source PDF (still has
+   *      signatures rendered for `completed` submissions).
+   *   3. `audit_log_url` — last-resort fallback so the admin gets at
+   *      least the audit log if no document URL came through.
+   *
+   * Throws BadRequest on a bad input, ServiceUnavailable if DocuSeal isn't
+   * configured, BadGateway if DocuSeal responds with an error.
+   */
+  async getSlaDocumentUrl(submissionId: string | number): Promise<{
+    submissionId: number;
+    url: string | null;
+    source: 'combined_document_url' | 'document' | 'audit_log_url' | null;
+    status: string | null;
+  }> {
+    const idStr = String(submissionId ?? '').trim();
+    if (!idStr || !/^\d+$/.test(idStr)) {
+      throw new BadRequestException('submissionId must be a positive integer');
+    }
+    const id = parseInt(idStr, 10);
+    const { apiKey, baseUrl } = this.requireDocusealConfig();
+
+    const res = await axios.get(`${baseUrl}/api/submissions/${id}`, {
+      headers: { 'X-Auth-Token': apiKey, Accept: 'application/json' },
+      validateStatus: () => true,
+    });
+    if (res.status < 200 || res.status >= 300) {
+      this.logger.warn(
+        `DocuSeal GET /submissions/${id} (admin view) failed status=${res.status}`,
+      );
+      throw new BadGatewayException({
+        message: 'DocuSeal submission lookup failed',
+        status: res.status,
+        details: res.data,
+      });
+    }
+
+    const data = (res.data || {}) as {
+      status?: string;
+      combined_document_url?: string;
+      audit_log_url?: string;
+      documents?: Array<{ url?: string }>;
+    };
+
+    const combined =
+      typeof data.combined_document_url === 'string' && data.combined_document_url.trim()
+        ? data.combined_document_url
+        : null;
+    const docs = Array.isArray(data.documents) ? data.documents : [];
+    const firstDocUrl =
+      docs.find((d) => typeof d?.url === 'string' && d.url.trim())?.url || null;
+    const auditUrl =
+      typeof data.audit_log_url === 'string' && data.audit_log_url.trim()
+        ? data.audit_log_url
+        : null;
+
+    let url: string | null = null;
+    let source: 'combined_document_url' | 'document' | 'audit_log_url' | null = null;
+    if (combined) {
+      url = combined;
+      source = 'combined_document_url';
+    } else if (firstDocUrl) {
+      url = firstDocUrl;
+      source = 'document';
+    } else if (auditUrl) {
+      url = auditUrl;
+      source = 'audit_log_url';
+    }
+
+    return {
+      submissionId: id,
+      url,
+      source,
+      status: typeof data.status === 'string' ? data.status : null,
+    };
+  }
+
+  /**
    * Amiqus webhook handler. The webhook fires on any state change — record
    * created, step completed, check accepted/rejected, etc. We don't try to
    * be clever about which event triggered us: any signal is enough to
