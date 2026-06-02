@@ -545,15 +545,31 @@ export class ComplianceService {
       }
     }
 
+    // Build Amiqus `name` block. `middle_name` is only sent when the
+    // caller supplied one — Amiqus accepts the field as optional but a
+    // present-but-empty string trips its validation, so we omit the key
+    // entirely in that case.
+    const trimmedMiddle =
+      typeof dto.middleName === 'string' ? dto.middleName.trim() : '';
+    const amiqusName: {
+      title: string;
+      first_name: string;
+      middle_name?: string;
+      last_name: string;
+    } = {
+      title: 'mr',
+      first_name: dto.firstName,
+      last_name: dto.lastName,
+    };
+    if (trimmedMiddle.length > 0) {
+      amiqusName.middle_name = trimmedMiddle;
+    }
+
     try {
       const clientRes = await axios.post(
         `${AMIQUS_BASE}/clients`,
         {
-          name: {
-            title: 'mr',
-            first_name: dto.firstName,
-            last_name: dto.lastName,
-          },
+          name: amiqusName,
           email: dto.email,
         },
         { headers, validateStatus: () => true },
@@ -911,6 +927,7 @@ export class ComplianceService {
     recordId: number;
     url: string | null;
     recordStatus: string | null;
+    terminal: boolean;
   }> {
     const idStr = String(recordId ?? '').trim();
     if (!idStr || !/^\d+$/.test(idStr)) {
@@ -939,7 +956,22 @@ export class ComplianceService {
         ? data.perform_url
         : null;
     const recordStatus = typeof data.status === 'string' ? data.status : null;
-    return { recordId: id, url, recordStatus };
+    // "Terminal" here means the Amiqus record is dead beyond recovery —
+    // the user can't resume it, only start a fresh one. We deliberately
+    // exclude 'rejected' from this set: rejected is a legitimate failed
+    // check that the user should see as such (with a Retry path), not a
+    // silent state-reset. Same for 'completed' — that's the success path,
+    // not something to reset. Only true "session-died" states qualify.
+    const TERMINAL_STATUSES = new Set([
+      'expired',
+      'cancelled',
+      'canceled',
+      'withdrawn',
+    ]);
+    const terminal =
+      typeof recordStatus === 'string' &&
+      TERMINAL_STATUSES.has(recordStatus.toLowerCase());
+    return { recordId: id, url, recordStatus, terminal };
   }
 
   /**

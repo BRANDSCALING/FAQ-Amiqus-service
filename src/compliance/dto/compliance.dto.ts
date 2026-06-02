@@ -18,6 +18,17 @@ export class InitAmiqusDto {
   @MaxLength(120)
   firstName: string;
 
+  /**
+   * Optional. When present, gets written to the Amiqus client's
+   * `middle_name` field so the photo-ID match step sees the same
+   * middle name that's printed on the document.
+   */
+  @ApiPropertyOptional({ example: 'Marie' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  middleName?: string;
+
   @ApiProperty({ example: 'Doe' })
   @IsString()
   @MinLength(1)

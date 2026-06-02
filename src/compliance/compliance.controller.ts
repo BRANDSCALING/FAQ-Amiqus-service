@@ -53,7 +53,7 @@ export class ComplianceApiController {
   @Get('resume-url')
   @ApiOperation({
     summary:
-      'Resume URL for an in-progress Amiqus record. Returns { recordId, url, recordStatus }. recordId query param required. `url` is null if the record is terminal (completed/cancelled/expired).',
+      'Resume URL for an in-progress Amiqus record. Returns { recordId, url, recordStatus, terminal }. recordId query param required. `url` is null if the record is no longer resumable. `terminal=true` specifically means the record is expired/cancelled/withdrawn — the caller should reset state and let the user start a fresh session.',
   })
   async amiqusResumeUrl(@Query('recordId') recordId?: string) {
     if (!recordId) {
