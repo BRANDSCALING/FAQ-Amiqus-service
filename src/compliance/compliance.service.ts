@@ -1056,6 +1056,57 @@ export class ComplianceService {
    * Throws BadRequest on a bad input, ServiceUnavailable if DocuSeal isn't
    * configured, BadGateway if DocuSeal responds with an error.
    */
+  /**
+   * Admin-only: delete a DocuSeal submission so the partner can sign a
+   * fresh one. Used by the admin "Reset SLA" flow when a partner asks
+   * to re-sign (e.g. wrong document, signed by the wrong person, or
+   * the contents need updating).
+   *
+   * Idempotent: a 404 from DocuSeal (submission already deleted) is
+   * treated as success — the caller's goal of "this submission no
+   * longer exists upstream" is satisfied either way. Any other
+   * non-2xx is surfaced as BadGateway.
+   *
+   * Note: this only deletes the submission on DocuSeal's side. The
+   * caller is responsible for clearing the corresponding sla_submission_id
+   * and sla_signed columns in our DB (handled by the Unified backend's
+   * resetSla orchestrator via the node-proxy).
+   */
+  async deleteSlaSubmission(submissionId: string | number): Promise<{
+    submissionId: number;
+    deleted: boolean;
+    alreadyGone: boolean;
+  }> {
+    const idStr = String(submissionId ?? '').trim();
+    if (!idStr || !/^\d+$/.test(idStr)) {
+      throw new BadRequestException('submissionId must be a positive integer');
+    }
+    const id = parseInt(idStr, 10);
+    const { apiKey, baseUrl } = this.requireDocusealConfig();
+
+    const res = await axios.delete(`${baseUrl}/api/submissions/${id}`, {
+      headers: { 'X-Auth-Token': apiKey, Accept: 'application/json' },
+      validateStatus: () => true,
+    });
+
+    if (res.status === 404) {
+      this.logger.log(`DocuSeal DELETE /submissions/${id} — already gone (404), treating as success`);
+      return { submissionId: id, deleted: true, alreadyGone: true };
+    }
+    if (res.status < 200 || res.status >= 300) {
+      this.logger.warn(
+        `DocuSeal DELETE /submissions/${id} failed status=${res.status} body=${JSON.stringify(res.data)?.slice(0, 500)}`,
+      );
+      throw new BadGatewayException({
+        message: 'DocuSeal submission delete failed',
+        status: res.status,
+        details: res.data,
+      });
+    }
+    this.logger.log(`DocuSeal DELETE /submissions/${id} ok status=${res.status}`);
+    return { submissionId: id, deleted: true, alreadyGone: false };
+  }
+
   async getSlaDocumentUrl(submissionId: string | number): Promise<{
     submissionId: number;
     url: string | null;

@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
+import { BadRequestException, Controller, Delete, Get, Param } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ComplianceService } from './compliance.service';
 
@@ -27,5 +27,17 @@ export class SlaAdminController {
       throw new BadRequestException('submissionId must be a positive integer');
     }
     return this.compliance.getSlaDocumentUrl(submissionId);
+  }
+
+  @Delete(':submissionId')
+  @ApiOperation({
+    summary:
+      'Delete a DocuSeal submission so the partner can sign a fresh one. Idempotent — returns success even if the submission was already deleted upstream.',
+  })
+  async deleteSubmission(@Param('submissionId') submissionId: string) {
+    if (!submissionId || !/^\d+$/.test(String(submissionId).trim())) {
+      throw new BadRequestException('submissionId must be a positive integer');
+    }
+    return this.compliance.deleteSlaSubmission(submissionId);
   }
 }
