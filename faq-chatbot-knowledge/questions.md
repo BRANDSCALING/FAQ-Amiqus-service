@@ -184,6 +184,82 @@ Yes. The programme is open to international investors. You do not need to be a U
 
 ---
 
+**SECTION 8: USING THE PORTAL — LOGGING IN AND YOUR ACCOUNT**
+
+**Q31. How do I activate my account when I first join?**
+
+When you join the Partner Programme we create your account automatically and send you a welcome email (the subject mentions activating your account). That email contains a link — click it, confirm your email address (it is already filled in), and choose your own password. As soon as you click "Activate" you are logged straight in. You only ever do this once. The link is valid for 48 hours; if it expires, do not worry — our system emails you a fresh one automatically. If you cannot find the email, check your junk or spam folder.
+
+**Q32. I keep getting activation emails — is my account broken?**
+
+No. Activation emails only go out while our system thinks you have not activated yet. If you have already set a password and you can sign in on the Sign In page, then you are activated — you can ignore those emails and you will never need another activation link. If you are still receiving them after you have logged in successfully, email info@brandscaling.co.uk and we will stop them. Do not click a new activation link once your account is active; it will not work.
+
+**Q33. My activation link has expired, or it says my account is "already active" — what do I do?**
+
+If it expired: our system automatically sends a new link, so just wait for the next email (or, after 10 days when the reminders stop, email info@brandscaling.co.uk for a fresh one). If it says "already active": that simply means you are already set up — close that page, go to the Sign In page, and log in with your email and password. If you have forgotten your password, use Forgot Password (see below).
+
+**Q34. I forgot my password — how do I reset it?**
+
+Do not use the activation link for this. On the Sign In page, click "Forgot password?" underneath the Sign In button. Enter your email and click Send Code. Within a minute or two you will receive a 6-digit code by email. Enter that code, type your new password twice, and click Reset Password. The code is valid for about an hour; if it stops working, just request a new one. If you request too many codes in a row the system pauses new requests for safety — wait 15 to 30 minutes and try again. If the email does not arrive, check your spam folder.
+
+**Q35. How do I log in after the first time?**
+
+Once your account is activated you use the Sign In page (there is a "Sign In" button at the top right of our website). Enter the email you joined with and the password you chose, then click Sign In — you are taken straight to your Partner Portal dashboard.
+
+**Q36. Can I change my email, name, phone number, or company name?**
+
+Your email cannot be changed by you, because it identifies your account — if you need it changed, email info@brandscaling.co.uk. Your name, phone number and company name you can change yourself: go to Settings (at the bottom of the left sidebar), click Edit profile, make your changes, and click Submit for review. An admin approves it (usually within one working day) and your details then update automatically. Please fill in the Middle name field if your passport or driving licence has one — your identity check needs your name to match your ID exactly.
+
+---
+
+**SECTION 9: USING THE PORTAL — COURSES, COMPLIANCE, AND PROPERTIES**
+
+**Q37. How do the training courses work (My Courses)?**
+
+The programme is a set of modules, each with a few lessons. Open My Courses, pick a lesson, watch the video and download any files attached to it. A lesson is marked complete automatically once you have watched the video and downloaded its files. Some lessons are video-only and some are files-only — whatever is on the lesson page is all you need. Your progress saves automatically, so you can stop and come back any time. The next lesson unlocks once you have finished the current one.
+
+**Q38. How do I complete my compliance checks (Identity, DBS, and SLA)?**
+
+Go to the Compliance page and click Start. There are three things: an Identity check (you photograph your passport or driving licence and take a quick selfie — usually a few minutes to a few hours), a DBS check (a UK criminal-record check — you fill in a short form and the government processes it, usually a few days), and the SLA, which is your agreement with Allianz Housing that you sign electronically on screen. When all three show green, you are fully compliant. You can check your status on the Compliance page at any time.
+
+**Q39. The identity or DBS check stopped, my internet dropped, or my session expired — what now?**
+
+Just go back to the Compliance page and click Continue — your photos and answers are saved and it picks up where you left off. If the session has expired, the Continue button turns into a Start button after a second or two; click Start for a fresh session and complete it as normal. No email is needed.
+
+**Q40. I already have a valid DBS certificate, or I have already signed the SLA elsewhere — do I have to do them again?**
+
+No. Email support@allianzhousing.org with the evidence — a photo or screenshot of your DBS certificate (or your DBS Update Service reference number), or a copy of your signed SLA. Our team reviews it and marks that step as approved or signed on your account, and the Compliance page updates automatically. You do not need to redo it in the portal.
+
+**Q41. How do I upload a property, and what do I need?**
+
+Go to the Property tab and click Add Property. Enter the address, property type, number of rooms and a few basic details — you can save it as a draft and finish later, nothing is lost. Before you can submit, you must attach 10 certificates (11 if the property is an HMO) and 4 documents. The Submit button stays greyed out until everything is uploaded, and the page shows you exactly what is still missing, so you do not have to guess.
+
+**Q42. What happens after I submit a property, and how long does approval take?**
+
+Your property goes to our admin team. They will approve it, ask you for changes, or reject it — and you will see the status update in your portal and get an email when it changes. If everything is complete and correct it can be approved within a few days; if we have questions we use the "Request Changes" feature to send it back with a note on what to fix.
+
+---
+
+**SECTION 10: ZOOM RECORDINGS — DEAL CLINIC AND EVENT RECORDINGS**
+
+**Q43. Where can I watch recordings of the Deal Clinics and events?**
+
+In the portal, click Zoom Recordings in the left-hand sidebar (just under My Courses). That is where we publish recordings of our live sessions so you can watch them back at any time.
+
+**Q44. How are the recordings organised?**
+
+There are two folders. Deal Clinic holds recordings of our live deal-review sessions, where real deals are looked at and your questions are answered. Events holds webinars, masterclasses and special guest sessions. Inside each folder the recordings are grouped by month — for example "March 2026" — so just click the month you want.
+
+**Q45. How do I watch a recording, and is there anything to download?**
+
+Click a month, then click the session you want. The video plays right there on the page — just press the play button. Some sessions also have a document attached, such as the slides; if there is one you will see it listed next to the video, and you can click it to open or download it.
+
+**Q46. Do I need to unlock recordings, or is there a limit on watching them?**
+
+No. There is nothing to unlock and no limit — you can watch any recording as many times as you like. New recordings are added after each session, so it is worth checking back regularly.
+
+---
+
 If you have a question that is not covered above, please email us at info@brandscaling.co.uk and our team will respond.
 
 ---

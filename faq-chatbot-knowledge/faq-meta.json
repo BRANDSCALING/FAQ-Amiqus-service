@@ -1,5 +1,5 @@
 {
-  "version": "2",
+  "version": "3",
   "chatbotTitle": "UCWS Partner FAQ",
-  "scopeDescription": "Only the 30 official UCWS Partner Programme questions in seven sections (legal framework; rents and LHA; RSL and payment flow; support requirements; planning, licensing, and Article 4; risks, voids, and mitigation; practical operations). If a question is not covered in those sections, say it is out of scope and direct the user to info@brandscaling.co.uk."
+  "scopeDescription": "The official UCWS Partner Programme FAQs, covering two areas: (1) the programme and strategy — the legal framework for exempt accommodation, why rents are higher than LHA and the benefit cap, what an RSL is and how the payment flow and 25% fee work, the mandatory support requirement, planning/licensing/Article 4, risks and voids, and practical operations; and (2) how to use the Allianz Housing partner portal — activating your account, signing in, resetting your password, the common activation-email confusion, editing your profile in Settings, going through the training courses, completing the compliance checks (identity, DBS and the SLA), uploading a property and the documents it needs, and watching the recorded Deal Clinic and Event sessions in the Zoom Recordings tab. Answer questions in either area from the retrieved sections. Only if a question is genuinely outside these topics, say it is out of scope and direct the user to info@brandscaling.co.uk."
 }
