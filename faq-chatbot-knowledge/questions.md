@@ -232,7 +232,7 @@ No. Email support@allianzhousing.org with the evidence — a photo or screenshot
 
 **Q41. How do I upload a property, and what do I need?**
 
-Go to the Property tab and click Add Property. Enter the address, property type, number of rooms and a few basic details — you can save it as a draft and finish later, nothing is lost. Before you can submit, you must attach 10 certificates (11 if the property is an HMO) and 4 documents. The Submit button stays greyed out until everything is uploaded, and the page shows you exactly what is still missing, so you do not have to guess.
+Go to the Property tab and click Add Property. Enter the address, property type, number of rooms and a few basic details — you can save it as a draft and finish later, nothing is lost. Before you can submit, you must attach the certificates and documents required for your property type. (The full list of which certificates and documents can apply is in Module 5's compliance section.) The Submit button stays greyed out until everything is uploaded, and the page shows you exactly what is still missing, so you do not have to guess.
 
 **Q42. What happens after I submit a property, and how long does approval take?**
 
@@ -260,7 +260,199 @@ No. There is nothing to unlock and no limit — you can watch any recording as m
 
 ---
 
-If you have a question that is not covered above, please email us at info@brandscaling.co.uk and our team will respond.
+**SECTION 11: COURSE — MODULE 1.1: SETTING UP YOUR BUSINESS**
+
+**Q47. What does Module 1.1 cover, and where do I find it?**
+
+Module 1.1 (in My Courses) covers how to build the legal and financial foundation of your property business before you source a single deal. It has these lessons: Lesson 1 — Setting Up Your Company (how and why to form a UK limited company); Lesson 2 — Sole Trader vs. Limited Company (which structure to choose and why); Lesson 4 — Legal & Tax / Protecting Profits (insurance, compliance certificates, bookkeeping, and building your professional team).
+
+**Q48. Which video explains how to set up a limited company?**
+
+Module 1.1, Lesson 1 (Setting Up Your Company). It walks through registering a UK limited company online via the official GOV.UK service — choosing a unique name, providing a registered address, appointing at least one director and shareholder, and paying the registration fee (the lesson notes the current GOV.UK fee is £100, subject to change). It stresses that your first action once incorporated is to open a separate business bank account, because keeping company and personal finances separate is a legal requirement. The lesson is educational only and recommends taking advice from a qualified accountant or solicitor.
+
+**Q49. Should I operate as a sole trader or a limited company?**
+
+This is covered in Module 1.1, Lesson 2 (Sole Trader vs. Limited Company). The course explains that the key difference is legal liability: a sole trader is the business (personal assets at risk), whereas a limited company is a separate legal entity that protects your personal assets. It also covers tax — sole traders pay Income Tax and face restricted mortgage interest relief (Section 24), while limited companies pay Corporation Tax and can deduct 100% of mortgage interest. For UCWS, the limited company is the standard, generally preferred structure. The course is clear this is educational only — speak to a qualified accountant about your own situation.
+
+**Q50. Where does the course cover insurance, compliance, and protecting my profits?**
+
+Module 1.1, Lesson 4 (Legal & Tax — Protecting Profits). It explains that standard home insurance may not cover supported or exempt accommodation, so you should arrange cover that reflects how the property is used (buildings, contents, and public liability are discussed), taking advice from a specialist FCA-authorised insurance broker. It introduces the core compliance certificates (Gas Safety, EICR, EPC at C or above, and fire safety measures), the need for clean bookkeeping for Corporation Tax, and the idea of building a professional team — a specialist insurance broker, a specialist mortgage broker, a solicitor, and an accountant.
+
+---
+
+**SECTION 12: COURSE — MODULE 1.2: THE THREE UCWS STRATEGIES**
+
+**Q51. What does Module 1.2 cover, and where do I find it?**
+
+Module 1.2 (in My Courses) introduces the three core UCWS acquisition strategies and the mindset and plan to get started. It has these lessons: Lesson 1 — Which Strategy Is Right For You; Lesson 2 — Strategy 1: The UC HMO; Lesson 3 — Strategy 2: The UC Joint; Lesson 4 — Strategy 3: The UC Self-Contained; Lesson 5 — The Mindset Shift; Lesson 6 — Your 90-Day Plan. Together these explain how to pick a strategy, how each model works, and a week-by-week roadmap to your first onboarded property.
+
+**Q52. What are the three UCWS strategies and how do I choose between them?**
+
+Module 1.2, Lesson 1 (Which Strategy Is Right For You) explains all three: the UC HMO (converting 3–4 bed family homes into 4–5 bed shared houses for maximum cashflow), the UC Joint (smaller 2-bed houses and flats run as shared homes), and the UC Self-Contained (studio and 1-bed flats for a single tenant or couple). Your choice depends on your starting capital, the property stock common in your target area, and your goals. The illustrative income figures shown in the lesson defer to the live rate sheet — actual rents are set per council in the rate sheet / Demand Map inside your account, so check there for your area rather than relying on fixed figures.
+
+**Q53. Where does the course explain the UC HMO strategy in detail?**
+
+Module 1.2, Lesson 2 (Strategy 1: The UC HMO — the cashflow engine). It explains that a UC HMO takes a 3-bed, 2-reception house and converts a reception room into a fourth bedroom, run in partnership with a Registered Provider under the exempt accommodation framework — so the rent is not capped by LHA, and no HMO licence or change-of-use planning is required due to the exempt C3(b) position. It covers the 25% provider and management fee, the £250 + VAT onboarding fee, and the setup requirements (compliance certificates, fire doors and a fire alarm, full furnishing). Specific room rents are set per council in the live rate sheet, so use that for your numbers.
+
+**Q54. What is the UC Joint strategy and which video covers it?**
+
+Module 1.2, Lesson 3 (Strategy 2: The UC Joint). It applies the UCWS principles to smaller 2-bedroom houses and flats, run as small shared homes through a Registered Provider. Tenants live under an Excluded Licence (not a standard AST), and no HMO licence is needed due to the exempt status. The course notes it suits investors in urban areas where 2-bed stock dominates and works well for a Rent-to-Rent approach. Income figures in the lesson are illustrative — the actual per-room rents are set per council in the live rate sheet / Demand Map.
+
+**Q55. What is the UC Self-Contained strategy and which video covers it?**
+
+Module 1.2, Lesson 4 (Strategy 3: The UC Self-Contained). It is the simplest model, for studios and 1-bed flats, providing a self-contained home for a single tenant or couple. The key difference is that the tenant has a standard Assured Shorthold Tenancy (AST), not an Excluded Licence, yet the property still qualifies for the exempt framework because it is let through a Registered Provider with tenant support. Setup costs are generally lower than a shared house (less fire-safety provision). It suits new investors and portfolio builders. Rents are set per council in the live rate sheet — check there rather than using fixed figures.
+
+**Q56. Where does the course talk about mindset and a 90-day plan?**
+
+Two lessons in Module 1.2. Lesson 5 (The Mindset Shift) explains moving from a reactive "landlord mindset" to a proactive "Wealth Builder / Housing Solutions Partner" mindset — thinking in portfolios and solutions rather than single properties and small margins. Lesson 6 (Your 90-Day Plan) is a week-by-week roadmap: training and area/strategy selection first, then onboarding your property, finding and vetting a tenant, moving them in, and the payment cycle (roughly six weeks after move-in, DWP pays the RP, the RP pays Allianz Housing, and Allianz pays you). It also notes the founding-partner benefit that the first 10 properties are onboarded free, with the standard £250 + VAT onboarding fee after that.
+
+---
+
+**SECTION 13: COURSE — THE SYSTEM & FINANCING STRATEGIES (MODULE 1 LESSON 3 + MODULE 2)**
+
+**Q57. Where does the course explain how the UCWS system and payment flow actually work?**
+
+Module 1, Lesson 3 (The Systems). It explains why traditional buy-to-let has been squeezed (rising rates, Section 24, more regulation) and how UCWS instead uses the government-supported exempt accommodation framework, set out in the Housing Benefit Regulations 2006 (Schedule 3, Para 4(10)) and reinforced by the Supported Housing (Regulatory Oversight) Act 2023 and the Social Housing (Regulation) Act 2023. Rents are higher because tenants need care, support, or supervision, so the rent is not capped by LHA. The payment flow: DWP pays the Registered Provider, the RP pays Allianz Housing, Allianz deducts the 25% fee and pays you the remaining 75%. It frames the model as win-win-win for tenant, government, and partner.
+
+**Q58. What does Module 2 cover, and where do I find it?**
+
+Module 2 (Supercharging Your Strategies, in My Courses) shows how to combine UCWS with established acquisition methods so you need little or no capital. It has these lessons: Lesson 1 — Supercharging Rent-to-Rent (R2R) with UCWS; Lesson 2 — Supercharging BRRR (Buy, Refurbish, Refinance, Rent) with UCWS; Lesson 3 — Supercharging Vendor Finance & Lease Options with UCWS; Lesson 5 — Building Your Power Team.
+
+**Q59. How do I do Rent-to-Rent with UCWS, and which video covers it?**
+
+Module 2, Lesson 1 (Supercharging Rent-to-Rent). R2R lets you generate cashflow from a property you control but do not own: you sign a Company Let Agreement with the landlord for a fixed term (typically 3–5 years), guarantee them a fixed rent, then operate the property. The lesson explains that, instead of subletting to standard tenants, you upload the property to the Allianz Housing portal (the Property section) and work with the Registered Provider to place eligible tenants under the exempt framework — turning thin R2R margins into strong cashflow even after the landlord's rent and the 25% fee. Figures shown are conceptual; always run any deal through the UCWS Deal Analyser.
+
+**Q60. Does the course cover BRRR, vendor finance, or lease options?**
+
+Yes. Module 2, Lesson 2 (Supercharging BRRR) explains how the higher UCWS income strengthens a property's cashflow so it is easier to refinance and pull your capital back out — though it stresses lender criteria vary and a stronger income profile does not guarantee a refinance outcome. Module 2, Lesson 3 (Supercharging Vendor Finance & Lease Options) explains both creative-finance structures and how the enhanced, RP-backed UCWS income de-risks the deal for a seller or owner and widens the cashflow margin. All examples are illustrative — use the UCWS Deal Analyser to assess any real deal.
+
+**Q61. Where does the course explain building a power team?**
+
+Module 2, Lesson 5 (Building Your Power Team). It covers the specialists you should line up — a specialist solicitor (for R2R, vendor finance and lease-option agreements and conveyancing), a property accountant, an expert mortgage broker, a reliable letting agent, and a trustworthy build team — and how to find and vet them through referrals, networking, and interviewing candidates about their experience with property investors and creative finance.
+
+---
+
+**SECTION 14: COURSE — MODULE 3: SOURCING & ANALYSING PROPERTY**
+
+**Q62. What does Module 3 cover, and where do I find it?**
+
+Module 3 (Sourcing & Analysing Property, in My Courses) gives you the full process to find, assess, and analyse deals. It has these lessons: Lesson 1 — Where to Buy & Where to Avoid; Lesson 2 — Property Types, Tenure & UCWS Standards; Lesson 3 — EPC Ratings (the refurb/EPC companion); Lesson 4 — The Property Viewing; Lesson 5 — Planning Permission & Article 4; Lesson 6 — The 5-Minute Deal Analyser.
+
+**Q63. Where does the course explain how to choose an area and find deals?**
+
+Module 3, Lesson 1 (Where to Buy & Where to Avoid). It teaches the "Goldilocks Zone" filter (avoid super-expensive prime centres and remote rural areas; focus on major towns and cities with strong demand) and a three-pillar framework: confirm demand using the UCWS Demand Map (data from official government sources), understand the profit gap between exempt accommodation rates and property prices, and use an online property-sourcing tool to find motivated sellers and suitable stock. Exempt accommodation rates for your area are set per council in the live rate sheet inside your UCWS account.
+
+**Q64. What property types and standards does the course require?**
+
+Module 3, Lesson 2 (Property Types, Tenure & UCWS Standards). It matches each strategy to property types (UC HMO: 3–6 bed houses; UC Joint: 2-bed flats or small houses; UC Self-Contained: studios or 1-bed flats), explains freehold vs. leasehold and the leasehold checklist (lease length, ground rent/service charges, restrictive covenants), and sets out minimum room sizes (single bedroom 6.51 m², double 10.22 m²) and minimum communal-room and amenity requirements by tenant number. The portal shows exactly which certificates and documents each property needs and what is still outstanding; the full compliance list is covered in Module 5.
+
+**Q65. Where does the course explain EPC ratings and low-cost refurb improvements?**
+
+Module 3, Lesson 3 (the EPC/refurb companion). It explains that every rental needs a valid EPC and that, although the current legal minimum is E (with the government planning to raise it to C), UCWS requires a minimum C rating before a property is fully approved — you can onboard a lower-rated property but it is only approved once upgraded to C. It covers reading the certificate (current rating, potential rating, recommended improvements), low-cost/high-impact upgrades (LED lighting, loft insulation, draught-proofing, cavity wall insulation), and expensive upgrades to avoid (external wall insulation, solar, full double glazing, underfloor heating).
+
+**Q66. Which video covers viewing a property, and what should I check?**
+
+Module 3, Lesson 4 (The Property Viewing). It gives the "3 S" framework — Structure (roof, walls, damp, windows, floors), Systems (electrics, heating, plumbing, gas, with ballpark replacement costs), and Suitability (measuring rooms against UCWS minimums and checking layout for fire safety). It includes a full viewing checklist, a floor-plan measurement protocol (measure habitable rooms, not halls/stairs/gardens), and ballpark refurbishment cost ranges (for example, a new kitchen £4,000–£7,000, a new bathroom £2,500–£5,000, a full rewire £3,500–£5,000).
+
+**Q67. Where does the course cover planning permission and Article 4?**
+
+Module 3, Lesson 5 (Planning Permission & Article 4). It explains the use classes (C3 dwellinghouse, C4 small HMO, Sui Generis for large HMOs) and the UCWS position that an RP-supported scheme with mandatory support is designed to meet C3(b) — up to 6 residents living as a single household with care and support. Where C3(b) is established there is no change of use, the C3→C4 permitted development right is not engaged, and Article 4 does not apply. If a property does not operate as a single household with structured support, the local planning authority may treat it as C4 or Sui Generis, in which case Article 4 or full planning may apply. The lesson includes an action task to check whether your target postcode sits in an Article 4 area.
+
+**Q68. Where is the Deal Analyser explained?**
+
+Module 3, Lesson 6 (The 5-Minute Deal Analyser). It walks through the UCWS Deal Analyser workbook — an Overview tab plus a 5-Minute Quick Analyser and detailed tabs for each strategy. You start with the Quick Analyser (six input fields) to get a fast GO / NO-GO: it calculates your total all-in cost, your operating profit using exempt accommodation rates (set per council in the live rate sheet, not standard LHA), your ROI, and your net monthly cashflow. The UCWS target is a minimum 20% ROI — the decision cell shows GO at 20% or higher, otherwise NO-GO.
+
+---
+
+**SECTION 15: COURSE — MODULE 4: NEGOTIATION & SECURING DEALS**
+
+**Q69. What does Module 4 cover, and where do I find it?**
+
+Module 4 (Negotiation & Securing Deals, in My Courses) gives you the scripts and templates to win landlords over and lock deals in. It has these lessons: Lesson 1 — The Perfect Pitch; Lesson 2 — The Win-Win Proposal; Lesson 3 — Objection Handling; Lesson 4 — Securing the Deal.
+
+**Q70. Where does the course teach how to pitch to a landlord?**
+
+Module 4, Lesson 1 (The Perfect Pitch). It frames you as a Housing Solutions Partner offering a professional service, gives problem-discovery questions to uncover a landlord's pain points, and provides a three-part script: the Problem (acknowledge their world), the Solution (a long-term company lease with guaranteed rent and full management), and the Proof (a compliant, RP-backed system). It also lists professional language to use (Company Let, commercial lease, guaranteed rent) and a pre-pitch checklist.
+
+**Q71. Is there a proposal template, and which video has it?**
+
+Module 4, Lesson 2 (The Win-Win Proposal). It gives a four-part written proposal template — a summary of the offer, the financials (guaranteed monthly, annual, and full-term income), your responsibilities/the landlord's benefits (guaranteed rent, full tenant management, minor maintenance, inspections, compliance support), and clear next steps — to be sent as a branded PDF after a verbal yes.
+
+**Q72. How do I handle landlord objections, and where is that covered?**
+
+Module 4, Lesson 3 (Objection Handling). It teaches the A-C-E framework (Acknowledge, Clarify, Educate) and word-for-word scripts for the most common objections — "it sounds too good to be true / what's the catch", "is this legal", "what about damage to my property", "I can get more on the open market", concerns about tenant type, and wanting to sell soon (using a break clause). The emphasis is that an objection is a request for more information, not a rejection.
+
+**Q73. What does the course say about legally securing a deal?**
+
+Module 4, Lesson 4 (Securing the Deal). It provides a Heads of Terms (HoTs) template recording the commercial terms (parties, property, term, rent, use clause, maintenance split, alienation, break clause, costs, confidentiality, subject to contract) to send before instructing solicitors, plus a Deal Safety Checklist covering commercial, planning, legal, and financial checks. The course is firm: do not sign any lease until every box is ticked and your solicitor has approved the final agreement.
+
+---
+
+**SECTION 16: COURSE — MODULE 5: ONBOARDING, REFURB & COMPLIANCE**
+
+**Q74. What does Module 5 cover, and where do I find it?**
+
+Module 5 (Property Onboarding, in My Courses) is the full process for taking a property from assessment to live. It has these lessons: Lesson 1 — The Onboarding Blueprint; Lesson 2 — The Property Assessment; Lesson 3 — The Transformation (refurb and furnishing); Lesson 4 — Compliance Deep Dive; Lesson 5 — The Final Sign-Off.
+
+**Q75. Where does the course explain the onboarding process and the partner gateway?**
+
+Module 5, Lesson 1 (The Onboarding Blueprint). It covers partner onboarding, which you complete once: your identity (KYC) check and DBS check are carried out via Amiqus, and your Service Level Agreement (SLA) is signed electronically via DocuSeal. (Your DBS is then renewed in line with Allianz policy, but the initial onboarding is one-time.) From there you onboard each property by uploading it in the Allianz Housing portal (the Property section). The founding-partner benefit is that the first 10 properties are onboarded free; after that the fee is £250 + VAT per property. For help with identity, DBS, or SLA, contact support@allianzhousing.org.
+
+**Q76. Where does the course explain how to assess a property before refurb?**
+
+Module 5, Lesson 2 (The Property Assessment). It covers the "Big Three" make-or-break checks — room sizes (minimum 6.51 m² per single bedroom; a 6.5 m² room fails), communal space (kitchen, dining, and living areas meeting the minimum size table by bed number), and amenities by bed number (correct WCs, bathrooms, and kitchen facilities) — plus layout and fire safety. It provides a room-by-room assessment checklist and a Defect Log template that becomes your scope of works and refurb budget.
+
+**Q77. Where does the course cover refurbishment and furnishing standards?**
+
+Module 5, Lesson 3 (The Transformation). It explains how to manage the refurb from your Defect Log — get two or three quotes, prioritise works (structural/safety first, then cosmetic, then finishing touches), and track progress — and gives the official UCWS Inventory List of required fixtures and fittings for every room (beds and bedding, wardrobes, kitchen white goods and equipment, communal seating and tables, bathroom items, garden and general items, and security: a front-door key lock box plus a combination lock on every bedroom door).
+
+**Q78. What compliance certificates and documents does my property need?**
+
+This is covered in Module 5, Lesson 4 (Compliance Deep Dive). The portal shows exactly which certificates and documents your property needs and what is still outstanding. The certificates typically required for every property are Gas Safety, EICR (electrical safety), EPC (energy performance, which must be C or above), Fire Risk Assessment, and PAT. HMOs also need an HMO Licence, Fire Detection/Alarm, and Emergency Lighting. Other certificates the portal can track include Buildings Insurance, Asbestos Management, Asbestos Report, and Damp Report. The documents required for every property are the Lease Agreement, Letter of Authority, and Title Deed; the portal also tracks Floor Plan and Mortgage Consent.
+
+**Q79. Where does the course explain the final sign-off and inspection?**
+
+Module 5, Lesson 5 (The Final Sign-Off). You upload all required certificates and documents (as clearly named, in-date PDFs), notify Allianz, and Allianz coordinates the Registered Provider's inspection. The RP carries out a full Housing Health and Safety Rating System (HHSRS) inspection (29 hazard categories plus HMO requirements). If it passes, the property goes live and is available for tenant placement; if issues are found, you rectify them and arrange a re-inspection. The lesson includes a detailed pre-inspection checklist covering documents, HMO signage and logs, property standards, and safety.
+
+---
+
+**SECTION 17: COURSE — MODULE 6: TENANTS**
+
+**Q80. What does Module 6 cover, and where do I find it?**
+
+Module 6 (Tenants, in My Courses) explains who your tenants are and how to source, screen, and manage them. The lessons in this part of the course are: Lesson 1 — Understanding the Tenant (the housing need); Lesson 2 — The Best Tenant Sourcing channels; Lesson 3 — The A-Z of Tenant Management (screening).
+
+**Q81. Where does the course explain who qualifies as a tenant and the exempt framework?**
+
+Module 6, Lesson 1 (Understanding the Tenant). It explains the two conditions for exempt accommodation (the landlord is a not-for-profit — the RP/RSL — and support is provided on their behalf), and that UCWS provides support (coaching, employment help, budgeting, community integration, housing sustainment), not personal care. It lists the tenant profiles who qualify (for example domestic-abuse survivors, care leavers, veterans, people with disabilities or mental-health needs, low-income workers), explains capped vs. uncapped tenants and the qualifying benefits that exempt a tenant from the benefit cap, and sets out the key terms of the Excluded Licence Agreement.
+
+**Q82. Where does the course explain how to find tenants?**
+
+Module 6, Lesson 2 (The Best Tenant Sourcing). It covers five referral pathways — local authorities and housing associations, DWP/Universal Credit teams at Jobcentre Plus, charities and supported-housing providers, community organisations, and employer partnerships — and advertising routes such as social-media marketplace and local housing groups, room-share and DSS/UC-friendly listing sites, and platforms aimed at benefit tenants (clearly stating "DSS/UC accepted"). It then walks through the sourcing process from posting an ad to sending the tenant the Allianz Housing referral form, with a copy going to Allianz and your tenant support team.
+
+**Q83. Where does the course explain tenant screening and vetting?**
+
+Module 6, Lesson 3 (The A-Z of Tenant Management — screening). It walks section by section through the Allianz Housing referral form (referral agency details, applicant details, five-year address history, medical background, risk assessment, next of kin, equality and inclusion, benefit and employment details, and authorisation/consent), explains how the risk-assessment answers are used (a "yes" does not automatically decline a tenant, it just prompts further assessment), and describes the tenant support services review and approval. It also explains the "Day 21 rule" — no tenant is moved in after day 21 of their Universal Credit payment cycle, so the first rent aligns with their benefit payment date.
+
+---
+
+**SECTION 18: WHO TO CONTACT — SUPPORT EMAILS**
+
+**Q84. Who do I contact for help, and which email should I use?**
+
+It depends on the topic. For the training courses and modules, the Zoom Recordings, the Demand Map, the Deal Analyser, or a technical issue with the app, email info@brandscaling.co.uk. For your compliance checks (your identity check, DBS, or the SLA agreement), for anything in the Property section, or for any other query — including anything outside the app or the course — email support@allianzhousing.org.
+
+**Q85. Who do I email about my identity check, DBS, SLA, or a property?**
+
+Email support@allianzhousing.org. That address handles the compliance checks (identity, DBS and the SLA agreement) and everything in the Property section — adding a property, its certificates and documents, and its approval status.
+
+**Q86. Who do I email about the courses, Zoom recordings, the Demand Map, the Deal Analyser, or a problem with the app?**
+
+Email info@brandscaling.co.uk. That address handles the training courses and modules, the Zoom Recordings, the Demand Map, the Deal Analyser, and any technical or app-related issue you want to report to the team.
+
+---
+
+If your question is not covered above: for the training courses, the Zoom Recordings, the Demand Map, the Deal Analyser, or a technical issue with the app, email info@brandscaling.co.uk. For the compliance checks (identity, DBS or the SLA), the Property section, or anything else, email support@allianzhousing.org.
 
 ---
 

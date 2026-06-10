@@ -92,7 +92,7 @@ export class FaqRetrievalService {
   }
 
   getTopK(): number {
-    const n = parseInt(this.config.get<string>('FAQ_RETRIEVAL_TOP_K') || '12', 10);
-    return Number.isFinite(n) && n > 0 ? Math.min(n, 30) : 12;
+    const n = parseInt(this.config.get<string>('FAQ_RETRIEVAL_TOP_K') || '20', 10);
+    return Number.isFinite(n) && n > 0 ? Math.min(n, 30) : 20;
   }
 }
