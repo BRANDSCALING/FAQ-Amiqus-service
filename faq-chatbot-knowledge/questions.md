@@ -452,6 +452,52 @@ Email info@brandscaling.co.uk. That address handles the training courses and mod
 
 ---
 
+**SECTION 19: USING THE DEAL ANALYSER**
+
+**Q87. What is the Deal Analyser and where do I find it?**
+
+The Deal Analyser is the tool that tells you whether a property deal stacks up under the UCWS exempt-accommodation model — it gives you a clear GO or NO-GO based on your numbers. Open it from the portal (the "Deal Analyser" link). The screen is titled "Deal Analyser — UCWS Exempt Accommodation". It is for illustration only and is not financial advice.
+
+**Q88. Which strategy should I choose — UC HMO, UC Joint, or UC Self-Contained?**
+
+There are three tabs at the top; pick the one that matches your property. UC HMO (Strategy 1) is a 3-bed-plus house with two reception rooms turned into a 4-bed shared house, charged per room per week. UC Joint (Strategy 2) is a 2-bed flat or house run as a 2-bed shared, also per room per week. UC Self-Contained (Strategy 3) is a studio or 1-bed flat let as a self-contained home, charged per unit per week. Switching tabs takes you back to a fresh input form.
+
+**Q89. How do I set the council area and number of beds, and why does it matter?**
+
+Before you can analyse a deal you must pick a Council Area and a Number of Beds (1 to 6). The UCWS rent is the council's own per-room weekly rate for that bed band (from the Allianz rate sheet) — it is not standard LHA, which is why it is set per council. To save time you can type a Postcode and the tool auto-fills the matching council for you. The "Analyse This Deal" button stays locked until both a council and a bed count are chosen, because the whole calculation depends on them.
+
+**Q90. What does each field in "Property Details" mean?**
+
+Property Address is the address of the property. Purchase Price / Value (£) is what you are paying for it, or its value. Number of Bedrooms/Unit is the rooms available for UCWS tenants. Current Market Rent (£/month) is the ordinary rent you would get without UCWS, used for comparison. Mortgage Rate (%) is your interest rate — set it to 0 if there is no mortgage. Mortgage Term (years) is the mortgage length — set to 0 if no mortgage. LTV (%) is loan-to-value, the percentage of the property value you are borrowing.
+
+**Q91. What are the "Setup Costs" and "Monthly Costs" fields?**
+
+Setup Costs are the one-off costs to get the property ready: Onboarding Fee (£250 + VAT), Electricity Certification (EICR), Gas Certification, EPC, Furniture (entered per room — note this per-room figure is not added into the setup total), Fire Alarms and Fire Doors (HMO and Joint only), Fire Safety Certificate, Decorating / Minor Works, and Broker / Mortgage Fees. A 10% contingency is added automatically on the results screen.
+
+Monthly Costs are the recurring costs, applied to both the standard and UCWS scenarios: Bills (gas/electric/water/council tax), Insurance, Maintenance Reserve, and Management / Other.
+
+**Q92. How is "Gross / Month" calculated?**
+
+Gross per month = the council's weekly rate × the number of beds × 52 ÷ 12. In words: multiply the per-room (or per-unit) weekly rate for your council by the number of beds to get the weekly rent, multiply by 52 to get the year, then divide by 12 to get the month. For example, at a council rate of £355.51 per room per week with 4 beds: 355.51 × 4 = £1,422.04 per week; × 52 = £73,946.08 per year; ÷ 12 = £6,162.17 gross per month. These figures are worked out for you from your inputs and the council rate — you do not type them in.
+
+**Q93. What do "Your Share — 75%" and "Deduction — 25%" mean?**
+
+The UCWS rent is split between you and UCWS. You (the owner) keep 75% and UCWS takes a 25% management fee. So Your Share per month = Gross/Month × 0.75, and the Deduction per month = Gross/Month × 0.25. It is your 75% share that is carried into the cashflow and ROI figures.
+
+**Q94. What are the 100%, 85% and 70% figures?**
+
+They are occupancy scenarios. The analyser shows your income and net cashflow at full occupancy (100%) and also at 85% and 70%, so you can see how the deal holds up if some rooms are empty (voids). The headline ROI and the GO / NO-GO decision are based on the 100% figure.
+
+**Q95. What does the results screen show, and what makes a deal a "GO"?**
+
+At the top you get a GO or NO-GO banner with the reason. Below that are four headline figures: Setup Costs (total), Payback Period, Extra Monthly (extra cashflow versus an ordinary let), and ROI @ 100%. Then there is a gross-income table (Standard / 100% / 85% / 70%, by week, month and year), the net cashflow for each occupancy level, and full breakdowns of the monthly and setup costs. The target is an ROI of at least 20% with positive monthly cashflow — that returns a GO. An ROI below 20%, or negative cashflow, returns a NO-GO with the reason shown.
+
+**Q96. How do I move through the tool and re-run a deal?**
+
+Pick a strategy tab, set the council and beds (or enter a postcode), fill in the three sections of fields, then click "Analyse This Deal". On the results screen you can click "Adjust Inputs" to change your numbers, "New Analysis" to start a fresh deal, or "Back" to return to the form.
+
+---
+
 If your question is not covered above: for the training courses, the Zoom Recordings, the Demand Map, the Deal Analyser, or a technical issue with the app, email info@brandscaling.co.uk. For the compliance checks (identity, DBS or the SLA), the Property section, or anything else, email support@allianzhousing.org.
 
 ---
