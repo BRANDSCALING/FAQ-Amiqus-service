@@ -498,6 +498,54 @@ Pick a strategy tab, set the council and beds (or enter a postcode), fill in the
 
 ---
 
+**SECTION 20: USING THE DEMAND MAP**
+
+**Q97. What is the Demand Map and where do I find it?**
+
+The Demand Map is an interactive, colour-coded map of all 296 local authorities (council areas) in England, found in the portal's "Demand Map" tab. Its purpose is exempt-housing investment intelligence: it shows where there is the most need for supported and exempt accommodation, so you can target the right areas. It combines nine official UK government datasets into one picture and refreshes automatically every quarter. It uses only public statistics — no personal data. For any questions about the Demand Map, contact info@brandscaling.co.uk.
+
+**Q98. How do I read the colours (the heatmap)?**
+
+Each council is shaded by a value, and a more intense colour means higher demand (or a higher value) for whichever layer is selected. By default the map shows the Overall Housing Demand Score. You can switch to a single layer — for example House Prices, which runs from green (affordable) to red (expensive) — to colour the map by just that measure, or tick several layers at once and the map blends their colours together. Grey means "no data reported for this area"; it does not mean low demand, just that no figure is available for that council on that layer.
+
+**Q99. What is the Overall Housing Demand Score and what do the bands mean?**
+
+It is a single pre-calculated score from 0 to 100, where higher means more need for supported housing. Councils fall into five bands: Critical Demand (65–100), Very High Demand (50–64), High Demand (35–49), Moderate Demand (20–34) and Low Demand (0–19). The coloured ring in the detail panel shows the exact score and band for the area you click.
+
+**Q100. What goes into the demand score?**
+
+It is a weighted blend of eight ingredients: the benefit claimant rate (20%), deprivation as measured by the IMD (15%), prison leavers (15%), the over-65s population share (10%), the children and young-people share (10%), the LHA rent shortfall (10%), NHS staff vacancies (10%), and a carried-forward base score (10%). Higher claimant rates, more deprivation, more vulnerable residents and bigger rent gaps all push the score up.
+
+**Q101. What do the twelve map layers show?**
+
+Overall Housing Demand (the combined score); Investment Opportunity (where demand is high and property is cheaper, so the yield potential is better); House Prices (average price, affordable to expensive); Housing Benefit, Universal Credit and PIP Claimants (the three DWP benefits — see Q102); Over-65s Housing Need and Family Housing Need (population age groups — see Q103); Prison Leavers (estimated ex-offenders needing housing); NHS Vacancies (staff vacancy rate, a proxy for key-worker housing pressure); IMD 2025 Deprivation (the government's official deprivation ranking); and LHA Shortfall Zones (the rent gap — see Q104).
+
+**Q102. What do the DWP benefit layers (Housing Benefit, Universal Credit, PIP) show?**
+
+They show how many people in each council are on each benefit, from DWP Stat-Xplore. Housing Benefit is the older housing support (being replaced by Universal Credit); Universal Credit is the main modern benefit (households with a housing element); and PIP, Personal Independence Payment, is a disability benefit used here as an indicator of supported-living need. A bigger claimant base generally signals stronger demand for exempt accommodation.
+
+**Q103. What do "Over-65s Housing Need" and "Family Housing Need" show?**
+
+Over-65s Housing Need is the share of the council's population aged 65 and over — a proxy for demand for sheltered and older-person housing. Family Housing Need is the share aged 0 to 19 — a proxy for family housing demand. Both come from ONS population estimates and are scaled from low to high across England.
+
+**Q104. What is "LHA Shortfall Zones"?**
+
+LHA stands for Local Housing Allowance — the cap on how much rent housing benefit will cover. This layer shows how much the local market rent exceeds that cap, scaled from Minimal to Severe. A larger shortfall means renters on benefits struggle more to afford ordinary local rents, which strengthens the case for the exempt-accommodation model, where higher rents are payable. It is calculated per rental-market area from VOA figures.
+
+**Q105. What does the detail panel show when I click a council?**
+
+It opens a panel with: the demand score ring and band; Property Market (average price, growth since 2019, and an investment score — the panel notes that lower prices mean higher yield potential); an Investment Signal (a plain-English recommendation generated from that area's data); Tenant Demand Sectors (the actual head-counts of people who may need supported accommodation — Housing Benefit, Universal Credit, PIP, elderly, children, prison leavers, probation caseload, NHS vacancies and the ONS claimant count); Benefit Claimant Trends (how claims changed from 2019 to 2025); and the IMD 2025 deprivation score with the area's national rank.
+
+**Q106. Why are some areas grey or "not reported"?**
+
+Grey means there is no figure available for that council on the selected layer — it is missing data, not zero demand. Most layers now cover all 296 councils; a small number of genuine gaps remain at source (for example, the Isles of Scilly has no published house-price figure). When several layers are combined, an area with no data on one of them contributes a neutral dark shade to the blend.
+
+**Q107. Where does the Demand Map data come from and how often is it updated?**
+
+It draws on nine official government sources: DWP Stat-Xplore (Housing Benefit, Universal Credit, PIP), ONS Claimant Count, MHCLG Indices of Deprivation 2025, VOA Local Housing Allowance, HM Land Registry house prices, ONS population estimates, MoJ probation data, NHS vacancy statistics, and DfE Children in Need. The data is refreshed automatically every quarter. Some figures (prison leavers and NHS vacancies) are modelled estimates allocated to each council, so treat them as directional indicators rather than exact local counts.
+
+---
+
 If your question is not covered above: for the training courses, the Zoom Recordings, the Demand Map, the Deal Analyser, or a technical issue with the app, email info@brandscaling.co.uk. For the compliance checks (identity, DBS or the SLA), the Property section, or anything else, email support@allianzhousing.org.
 
 ---

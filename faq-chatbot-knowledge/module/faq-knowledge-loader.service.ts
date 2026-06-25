@@ -102,9 +102,9 @@ export class FaqKnowledgeLoaderService implements OnModuleInit {
     try {
       const rawMd = readFileSync(questionsPath, 'utf-8');
       const sections = parseQuestionsMarkdownSections(rawMd);
-      if (sections.length !== 19) {
+      if (sections.length !== 20) {
         this.logger.warn(
-          `Expected 19 SECTION chunks from questions.md, got ${sections.length}. Check **SECTION N:** headings.`,
+          `Expected 20 SECTION chunks from questions.md, got ${sections.length}. Check **SECTION N:** headings.`,
         );
       }
 
