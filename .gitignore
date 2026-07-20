@@ -1,0 +1,18 @@
+# Dependencies & build
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+.aws-local.env
+
+# OS / IDE
+.DS_Store
+.idea/
+
+*.log
+npm-debug.log*

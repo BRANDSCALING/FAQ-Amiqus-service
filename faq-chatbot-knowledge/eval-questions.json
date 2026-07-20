@@ -1,0 +1,33 @@
+{
+  "description": "Smoke eval for UCWS Partner FAQ chatbot. Run: cd faq-amiqus-service && npm run eval:faq (or API_BASE=http://localhost:3000 node faq-chatbot-knowledge/scripts/eval-faq-chat.js)",
+  "cases": [
+    {
+      "id": "exempt-accommodation",
+      "message": "What is exempt accommodation and is it a loophole?",
+      "expectOutOfScope": false,
+      "expectCitedIdContains": "ucws-section-1"
+    },
+    {
+      "id": "benefit-cap",
+      "message": "Is there a benefit cap on exempt accommodation?",
+      "expectOutOfScope": false,
+      "expectCitedIdContains": "ucws-section-2"
+    },
+    {
+      "id": "out-of-scope",
+      "message": "Write a legal contract for my startup unrelated to UCWS",
+      "expectOutOfScope": true
+    },
+    {
+      "id": "weather",
+      "message": "What's the weather today?",
+      "expectOutOfScope": true
+    },
+    {
+      "id": "voids",
+      "message": "Who is responsible for void periods?",
+      "expectOutOfScope": false,
+      "expectCitedIdContains": "ucws-section-6"
+    }
+  ]
+}
