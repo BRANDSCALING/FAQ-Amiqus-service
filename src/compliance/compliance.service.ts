@@ -458,11 +458,11 @@ export class ComplianceService {
         // Agreement checkbox (e.g. "I hereby confirm and agree to all the Terms
         // and Conditions of this agreement") — auto-tick it so the signer only
         // has to review + sign + complete. Kept interactive (not readonly) so it
-        // stays a genuine tick they can see (and could untick). Only checkboxes
-        // whose label reads as an agreement/consent are ticked; any other
-        // checkbox is left alone.
+        // stays a genuine tick they can see (and could untick). Matched by an
+        // agreement keyword OR the literal name "checkbox" (the SLA template's
+        // field is named "checkbox field"); any other checkbox is left alone.
         if (type === 'checkbox') {
-          if (/(agree|terms|conditions|confirm|consent|acknowledge|hereby)/i.test(name)) {
+          if (/(agree|terms|conditions|confirm|consent|acknowledge|hereby|checkbox)/i.test(name)) {
             out.push({ name, default_value: true, readonly: false });
             seen.add(name);
             this.logger.log(`SLA prefill: auto-ticking agreement checkbox "${name}"`);
