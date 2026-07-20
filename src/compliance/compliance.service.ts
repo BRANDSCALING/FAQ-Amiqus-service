@@ -430,7 +430,7 @@ export class ComplianceService {
     templateId: number,
     dto: InitDocuSealDto,
     today: string,
-  ): Promise<Array<{ name: string; default_value: string; readonly?: boolean; preferences?: unknown }>> {
+  ): Promise<Array<{ name: string; default_value: string | boolean; readonly?: boolean; preferences?: unknown }>> {
     try {
       const { apiKey, baseUrl } = this.requireDocusealConfig();
       const res = await axios.get(`${baseUrl}/api/templates/${templateId}`, {
@@ -446,7 +446,7 @@ export class ComplianceService {
       }
       const rawFields = (res.data as { fields?: unknown })?.fields;
       const fields = Array.isArray(rawFields) ? rawFields : [];
-      const out: Array<{ name: string; default_value: string; readonly?: boolean; preferences?: unknown }> = [];
+      const out: Array<{ name: string; default_value: string | boolean; readonly?: boolean; preferences?: unknown }> = [];
       const seen = new Set<string>();
       for (const f of fields) {
         const name = typeof (f as { name?: unknown })?.name === 'string' ? (f as { name: string }).name : '';
@@ -455,8 +455,24 @@ export class ComplianceService {
             ? (f as { type: string }).type.toLowerCase()
             : '';
         if (!name || seen.has(name)) continue;
+        // Agreement checkbox (e.g. "I hereby confirm and agree to all the Terms
+        // and Conditions of this agreement") — auto-tick it so the signer only
+        // has to review + sign + complete. Kept interactive (not readonly) so it
+        // stays a genuine tick they can see (and could untick). Only checkboxes
+        // whose label reads as an agreement/consent are ticked; any other
+        // checkbox is left alone.
+        if (type === 'checkbox') {
+          if (/(agree|terms|conditions|confirm|consent|acknowledge|hereby)/i.test(name)) {
+            out.push({ name, default_value: true, readonly: false });
+            seen.add(name);
+            this.logger.log(`SLA prefill: auto-ticking agreement checkbox "${name}"`);
+          } else {
+            this.logger.log(`SLA prefill: leaving checkbox "${name}" untouched (no agreement keyword)`);
+          }
+          continue;
+        }
         // Only prefill value-bearing field types. Never touch signature /
-        // initials / image / stamp / checkbox / file etc.
+        // initials / image / stamp / file etc.
         if (!['text', 'date', 'number', 'phone', 'email', 'cells', ''].includes(type)) continue;
         const value = this.matchSlaFieldValue(name, type, dto, today);
         if (value === null || value === '') continue;
@@ -910,7 +926,17 @@ export class ComplianceService {
       });
 
       if (res.status < 200 || res.status >= 300) {
-        const canFallback = this.isDocuSealUnknownFieldError(res.data);
+        // Retry without prefills if DocuSeal rejects a field we sent — either an
+        // unknown field name, or ANY 400/422 validation while we DID send
+        // prefill fields (e.g. an unexpected checkbox/default_value). This
+        // guarantees the user can still sign (filling fields manually) rather
+        // than being blocked by a prefill mismatch.
+        const sentPrefills = payload.submitters.some(
+          (s) => Array.isArray(s.fields) && s.fields.length > 0,
+        );
+        const canFallback =
+          this.isDocuSealUnknownFieldError(res.data) ||
+          ((res.status === 400 || res.status === 422) && sentPrefills);
 
         if (canFallback) {
           this.logger.warn(
