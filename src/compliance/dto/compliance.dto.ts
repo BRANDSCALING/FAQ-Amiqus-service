@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsEmail,
   IsIn,
   IsObject,
@@ -49,6 +50,26 @@ export class InitAmiqusDto {
   @IsString()
   @MaxLength(40)
   phoneNumber?: string;
+
+  /**
+   * Current compliance state for this user, sent by the portal (which
+   * already knows it from /db-status). When a check is already approved we
+   * skip its Amiqus step so the user only completes what's outstanding:
+   *   - identityApproved=true  → omit the photo_id (Identity) step
+   *   - dbsApproved=true       → omit the criminal_record (DBS) step
+   * Both omitted (nothing outstanding) is rejected — there's nothing to do.
+   * A DBS-only record is allowed: the criminal_record step collects the
+   * identity documents the DBS itself requires.
+   */
+  @ApiPropertyOptional({ example: false })
+  @IsOptional()
+  @IsBoolean()
+  identityApproved?: boolean;
+
+  @ApiPropertyOptional({ example: false })
+  @IsOptional()
+  @IsBoolean()
+  dbsApproved?: boolean;
 }
 
 // 'SLA' is the live combined HSP + Tenant SLA (DocuSeal template 4).

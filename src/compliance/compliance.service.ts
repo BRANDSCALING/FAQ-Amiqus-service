@@ -649,8 +649,15 @@ export class ComplianceService {
     }
     const criminalAvailableOnWorkspace = enabledWorkspaceStepTypes.includes(criminalStepType);
 
+    // Per-user step selection: skip whatever's already approved so the user
+    // only completes what's outstanding. Identity (photo_id) is skipped when
+    // identityApproved; DBS (criminal_record) is skipped when dbsApproved
+    // (in addition to the workspace/config gating below).
+    const includePhotoStep = dto.identityApproved !== true;
+    const dbsAlreadyApproved = dto.dbsApproved === true;
+
     let includeCriminalStep = false;
-    if (mode === 'off') {
+    if (mode === 'off' || dbsAlreadyApproved) {
       includeCriminalStep = false;
     } else if (mode === 'on') {
       if (!criminalAvailableOnWorkspace) {
@@ -678,6 +685,19 @@ export class ComplianceService {
           `Amiqus mode=auto: skipping criminal step — "${criminalStepType}" not in GET /steps (photo ID only).`,
         );
       }
+    }
+
+    // Nothing outstanding to verify (or the only outstanding check is DBS but
+    // it isn't enabled on this workspace) — bail out before creating an Amiqus
+    // client so we don't leave an orphaned client with an empty record.
+    if (!includePhotoStep && !includeCriminalStep) {
+      const bothApproved =
+        dto.identityApproved === true && dto.dbsApproved === true;
+      throw new BadRequestException(
+        bothApproved
+          ? 'Nothing to verify — Identity and DBS are already approved for this user.'
+          : 'No Amiqus steps to run: Identity is already approved and the DBS (criminal record) step is not enabled on this workspace.',
+      );
     }
 
     // Build Amiqus `name` block. `middle_name` is only sent when the
@@ -730,12 +750,13 @@ export class ComplianceService {
         throw new BadGatewayException('Amiqus create client returned an unexpected response');
       }
 
-      const photoStep = {
-        type: AMIQUS_STEP_PHOTO_ID,
-        preferences: this.amiqusPhotoIdPreferences(photoReportType),
-      };
-
-      const steps: Array<Record<string, unknown>> = [photoStep];
+      const steps: Array<Record<string, unknown>> = [];
+      if (includePhotoStep) {
+        steps.push({
+          type: AMIQUS_STEP_PHOTO_ID,
+          preferences: this.amiqusPhotoIdPreferences(photoReportType),
+        });
+      }
       if (includeCriminalStep) {
         const criminalStep =
           criminalStepType === AMIQUS_STEP_CRIMINAL_DEFAULT
