@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FaqOpenAiChatService } from './faq-open-ai-chat.service';
+import { FaqAnthropicChatService } from './faq-anthropic-chat.service';
 import { FaqKnowledgeLoaderService } from './faq-knowledge-loader.service';
 import { FaqLlamaIndexRagService } from './faq-llamaindex-rag.service';
 import { FaqRetrievalService } from './faq-retrieval.service';
@@ -16,7 +17,10 @@ import {
 } from './faq-chat-output.util';
 import type { FaqEntry } from './types/faq-knowledge.types';
 
-const DEFAULT_FAQ_MODEL = 'gpt-4o-mini';
+// Low-cost default: Claude Haiku 4.5 (cheapest current Claude model). Override
+// with the FAQ_CHAT_MODEL env var. Anything starting with "claude" routes to
+// FaqAnthropicChatService; otherwise FaqOpenAiChatService.
+const DEFAULT_FAQ_MODEL = 'claude-haiku-4-5-20251001';
 
 export interface FaqChatResult {
   response: string;
@@ -52,6 +56,7 @@ export class FaqChatService {
 
   constructor(
     private readonly llm: FaqOpenAiChatService,
+    private readonly anthropic: FaqAnthropicChatService,
     private readonly knowledgeLoader: FaqKnowledgeLoaderService,
     private readonly llamaRag: FaqLlamaIndexRagService,
     private readonly retrieval: FaqRetrievalService,
@@ -175,7 +180,9 @@ ${retrievedBlock || '(No entries.)'}`;
     let citedFaqIds: string[];
 
     try {
-      const out = await this.llm.generateResponse(model, messages, {
+      // Route by model: Claude → Anthropic, everything else → OpenAI.
+      const provider = model.startsWith('claude') ? this.anthropic : this.llm;
+      const out = await provider.generateResponse(model, messages, {
         temperature: 0.2,
         max_tokens: 700,
         response_format: useStruct ? FAQ_CHAT_RESPONSE_JSON_SCHEMA : 'text',

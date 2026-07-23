@@ -21,14 +21,21 @@ export interface FaqOpenAiChatResult {
  */
 @Injectable()
 export class FaqOpenAiChatService {
-  private readonly client: OpenAI;
+  private client: OpenAI | null = null;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(private readonly config: ConfigService) {}
+
+  // Lazy init so the app boots even when OPENAI_API_KEY is absent (e.g. when
+  // the FAQ chat runs on Claude instead). The error only surfaces if an
+  // OpenAI-model chat is actually attempted without a key.
+  private getClient(): OpenAI {
+    if (this.client) return this.client;
     const apiKey = this.config.get<string>('OPENAI_API_KEY')?.trim();
     if (!apiKey) {
-      throw new Error('OPENAI_API_KEY is not set (required for FAQ LLM)');
+      throw new Error('OPENAI_API_KEY is not set (required for FAQ LLM on OpenAI models)');
     }
     this.client = new OpenAI({ apiKey });
+    return this.client;
   }
 
   async generateResponse(
@@ -51,7 +58,7 @@ export class FaqOpenAiChatService {
       requestParams.response_format = { type: 'json_object' };
     }
 
-    const completion = (await this.client.chat.completions.create(
+    const completion = (await this.getClient().chat.completions.create(
       requestParams as unknown as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
     )) as OpenAI.Chat.ChatCompletion;
     return {

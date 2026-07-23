@@ -8,6 +8,7 @@ import { FaqRetrievalService } from '../faq-chatbot-knowledge/module/faq-retriev
 import { FaqChatCacheService } from '../faq-chatbot-knowledge/module/faq-chat-cache.service';
 import { FaqChatRateLimitGuard } from '../faq-chatbot-knowledge/module/faq-chat-rate-limit.guard';
 import { FaqOpenAiChatService } from '../faq-chatbot-knowledge/module/faq-open-ai-chat.service';
+import { FaqAnthropicChatService } from '../faq-chatbot-knowledge/module/faq-anthropic-chat.service';
 import { ComplianceModule } from './compliance/compliance.module';
 
 /**
@@ -29,6 +30,7 @@ import { ComplianceModule } from './compliance/compliance.module';
     FaqChatCacheService,
     FaqChatRateLimitGuard,
     FaqOpenAiChatService,
+    FaqAnthropicChatService,
     FaqChatService,
   ],
 })

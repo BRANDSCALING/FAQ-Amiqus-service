@@ -32,5 +32,7 @@ export const FAQ_CHAT_RESPONSE_JSON_SCHEMA = {
 };
 
 export function faqChatUsesStructuredOutput(model: string): boolean {
-  return model === 'gpt-4o' || model === 'gpt-4o-mini';
+  // Claude models use forced tool-use (see FaqAnthropicChatService) to emit the
+  // same structured shape, so treat them as structured-capable too.
+  return model === 'gpt-4o' || model === 'gpt-4o-mini' || model.startsWith('claude');
 }
