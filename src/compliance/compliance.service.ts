@@ -481,12 +481,22 @@ export class ComplianceService {
         // stops in DocuSeal's signing flow — the signer is taken straight to
         // the only things left to do (the signature + any checkbox), instead
         // of stepping through every pre-filled field.
+        //
+        // EXCEPTION — person-name fields (e.g. "Name of Director") stay
+        // editable: the portal account holder is not always the company's
+        // director (they may manage the account on the director's behalf),
+        // so the signer must be able to correct the name on the deed. The
+        // profile name remains the prefilled default; an editable field is a
+        // normal stop in the signing flow, so they review it either way.
+        const isPersonName =
+          /name/i.test(name) &&
+          !/(company|business|organisation|organization|trading|firm)/i.test(name);
         const entry: {
           name: string;
           default_value: string;
           readonly: boolean;
           preferences?: unknown;
-        } = { name, default_value: value, readonly: true };
+        } = { name, default_value: value, readonly: !isPersonName };
         if (type === 'date' || /date/i.test(name)) entry.preferences = { format: 'DD/MM/YYYY' };
         out.push(entry);
         seen.add(name);
