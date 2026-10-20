@@ -48,17 +48,21 @@ jobs:
             -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" \
             --push .
 
-      - name: Force ECS service redeployment
-        run: |
-          aws ecs update-service \
-            --cluster "${{ env.ECS_CLUSTER }}" \
-            --service "${{ env.ECS_SERVICE }}" \
-            --force-new-deployment \
-            --region "${{ env.AWS_REGION }}"
+      # The task definition (env + secret ARNs) is owned by the committed
+      # taskdef.json — same model as the other UCES services. A manual console
+      # edit to the task def gets replaced on the next deploy.
+      - name: Render task definition with new image
+        id: taskdef
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: taskdef.json
+          container-name: amiqus-faq-allianz
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
-      - name: Wait for deployment to complete
-        run: |
-          aws ecs wait services-stable \
-            --cluster "${{ env.ECS_CLUSTER }}" \
-            --services "${{ env.ECS_SERVICE }}" \
-            --region "${{ env.AWS_REGION }}"
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.taskdef.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true

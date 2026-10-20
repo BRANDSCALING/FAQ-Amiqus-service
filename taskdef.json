@@ -1,0 +1,55 @@
+{
+  "family": "amiqus-faq-allianz",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::802749364652:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "amiqus-faq-allianz",
+      "image": "802749364652.dkr.ecr.us-east-1.amazonaws.com/amiqus-faq-allianz:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "name": "amiqus-faq-allianz-3000-tcp",
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "3000" },
+        { "name": "DOCUSEAL_URL", "value": "https://sign.brandscaling.co.uk" },
+        { "name": "SLA_TEMPLATE_ID", "value": "4" },
+        { "name": "HSPSLA_TEMPLATE_ID", "value": "1" },
+        { "name": "TENANTS_TEMPLATE_ID", "value": "2" },
+        { "name": "AMIQUS_DBS_STEP_TYPE", "value": "check.criminal_record" },
+        { "name": "AMIQUS_CRIMINAL_RECORD_REGION", "value": "england" },
+        { "name": "AMIQUS_CRIMINAL_RECORD_TYPE", "value": "basic" },
+        { "name": "AMIQUS_ENABLE_CRIMINAL_RECORD_STEP", "value": "auto" },
+        { "name": "PARTNER_BACKEND_URL", "value": "https://quiz-api.uces.uk" }
+      ],
+      "secrets": [
+        { "name": "AMIQUS_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:amiqus-faq-allianz/amiqus-api-key-CFqNX0" },
+        { "name": "AMIQUS_WEBHOOK_SECRET", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:amiqus-faq-allianz/amiqus-webhook-secret-g7vPJW" },
+        { "name": "DOCUSEAL_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:amiqus-faq-allianz/docuseal-api-key-km6nCV" },
+        { "name": "OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:amiqus-faq-allianz/openai-api-key-92eG3J" },
+        { "name": "AMIQUS_OAUTH_CLIENT_ID", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:amiqus-faq-allianz/amiqus-oauth-client-id-Qjg1mn" },
+        { "name": "AMIQUS_OAUTH_CLIENT_SECRET", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:amiqus-faq-allianz/amiqus-oauth-client-secret-06yRNZ" },
+        { "name": "AMIQUS_OAUTH_ACCESS_TOKEN", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:amiqus-faq-allianz/amiqus-oauth-access-token-WRxmLL" },
+        { "name": "AMIQUS_OAUTH_REFRESH_TOKEN", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:amiqus-faq-allianz/amiqus-oauth-refresh-token-hlnMh4" },
+        { "name": "ANTHROPIC_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:802749364652:secret:faq_chatbot-wgeXXU:amiqus-faq-allianz/anthropic-api-key::" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/amiqus-faq-allianz",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
